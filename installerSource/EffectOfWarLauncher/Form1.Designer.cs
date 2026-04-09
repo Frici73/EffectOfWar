@@ -45,6 +45,7 @@
             this.Starter.TabIndex = 0;
             this.Starter.Text = "Starter";
             this.Starter.UseVisualStyleBackColor = true;
+            this.Starter.Click += new System.EventHandler(this.Starter_Click);
             // 
             // pictureBox1
             // 
