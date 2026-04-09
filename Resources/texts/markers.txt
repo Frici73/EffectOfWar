@@ -1,0 +1,11 @@
+Egyes marker-ek nem rendelkeznek hatással, még másikak eltűnésükkor még (de)buffot / DoT / HoT-ot hagynak maguk után.
+    Arrow: Robin használja őket aki minden eltűnő Arrow miatt erősödik és minden lent lévő után erősebb a második képessége
+    Blood: Vampire használja pár körig helyezzi le, nagyobbat üt a célpontra ezekáltal és, ha eltűnnek 5-ös Explosion-t hagy maga után
+    Leaf: Garden használja 3 körig helyezzi le, minden lent lévő után erősebb és mikor eltűnnek 17%-os Mana charge-ot hagynak maguk után
+    Weight: Gravity használja 3 körig tart, törlődéskor hagy 10%-os Over regenerate HoT-ot 1 körig
+    Speed: Snake használja képesség erősítésre és öngyógyításra (7 körig tart)
+    Sword: Sacrifice használja öngyógyításra és sebzés növelésre
+    Fortune cookie: Grandmother használja! 4 különböző verziója van (csoki, vanília, eper, banán) mindegyik külön buffokat hordoz, mely a cookie törlődésekor jelenik meg 1 körig, a cookie 2 körig aktív
+    Mana: Solmir használja képesség erősítésre
+    Essential: Shard használja képesség erősítésre
+    Wing: Raven használja: Sebződést növel, robban a pontosság 15%-ával, ha Raven megtámad (3 kör)

@@ -1,0 +1,11 @@
+Két játék mód van: PvP és Boss Battle\nA PvP 3 a három ellen, még a Boss Battle 4 az 1 ellen (mindig a második csapatba kell helyezni a boss-t)
+
+Egyes karakterek rendelkeznek Talent-tel, ezek a Talentek karakterenként egyedi hatással, cooldownal, stack limittel rendelkeznek, sőt néhány karakternél a játék elején 1 darab sincs betöltve.
+
+Egyes karaktereknek több módja van, vagyis 1 képesség több képességet hordoz magában és a karakter módjától függ, hogy éppen melyik része érvényesül.
+A mód váltás két féle lehet:
+    1) körkörös: ilyenkor a karakter mode váltása körbe megy pl.: 1 -> 2 -> 3 -> 1 -> 2...
+    2) lineáris: ilyenkor amikor a maximum mode-ot eléri a karakter akkor vissza fele kezdi váltani pl.: 1 -> 2 -> 3 -> 2 -> 1 -> 2...
+
+Játékosok által játszható karakterek csak is supportok, rangerek és warriorok, a bossok NEM!
+A bossok rendelkeznek mindig 3. képességgel is, ezenfelül mindegyik bossnak van leírása arról, hogy mikor mennyi eséllyel használja bizonyos képességeit.

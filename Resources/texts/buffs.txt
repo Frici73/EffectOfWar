@@ -1,0 +1,6 @@
+Vannak statisztikát és játékmenetet befolyásoló buffok is, az alapok neve mindig a statisztikáról kapják a nevüket, a látható értékük az amennyit már modósítottak.
+    
+    Taunt: az összes támadást magára hívja (passzívból származót nem mindig)
+    Reincarnation: a következő támadásba, ha belehal akkor feltámad x% maxhp-val
+    Immortality: nem csökkenhet 1 alá az élete ? körig
+    Absolute One: A következő x körben lecsökkenhet 1 alá az élete, ha eltűnik ez a buff akkor az éppen akkori élete abszolút értéke lesz az új élete

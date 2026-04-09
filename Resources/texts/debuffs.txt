@@ -1,0 +1,3 @@
+Vannak statisztikát és játékmenetet befolyásoló debuffok is, az alapok neve mindig a statisztikáról kapják a nevüket, a látható értékük az amennyit már modósítottak.
+
+    Sleep: Az 1, 2 (& 3-as) képességeket és a talentet nem engedi érvényesülni

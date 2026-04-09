@@ -1,0 +1,7 @@
+Körönként sebeznek.
+
+    Bleeding: A sebzés x%-át sebzi ? körig.
+    Explosion: a mágikus és fizikai pajzs x-szeresével sérül a karakter ? körig (a szorzó lesz kiírva)
+    Fall: A maximum élet ?%-át sebzi és minden körben 10%-al nő az összesített érték
+    Poison: A hordozó mágikus és fizikai erejének az összegének x%-át sebzi
+    Lifesteal: Sebez x% maxéletével annak aki adta abba akinek adta, a sebzés 100%-át gyógyulja aki adta (fizikailag)

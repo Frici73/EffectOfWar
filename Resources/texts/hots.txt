@@ -1,0 +1,4 @@
+Körönként gyógyítanak.
+
+    Mana charge: gyógyít a kör elején a mana érzékenység x%-ával gyógyít ? körön át
+    Over regenerate: gyógyít az immunrendszer x%-ával ? körön át
