@@ -23,6 +23,7 @@ namespace EffectOfWarLauncher
         bool needupdate = false;
         string exeFolder = AppDomain.CurrentDomain.BaseDirectory;
         HttpClient client = new HttpClient();
+        Dictionary<string, string> serverVersion;
         public Launcher()
         {
             InitializeComponent();
@@ -32,20 +33,14 @@ namespace EffectOfWarLauncher
         private void Launcher_Load(object sender, EventArgs e)
         {
             ICO();
-            RefreshDatas();
+            RefreshDatas();            
         }
         private void Refresh_Click(object sender, EventArgs e) => RefreshDatas();
-        private void RefreshDatas()
+        private async void RefreshDatas()
         {
-            if (!File.Exists(Path.Combine(exeFolder, "EffectOfWar.exe")))
+            if (!await CheckVersion())
             {
                 needupdate = true;
-                Starter.Text = "Játék telepítése";
-            }
-            else if (!CheckVersion().Result)
-            {
-                needupdate = true;
-                Starter.Text = "Játék frissítése";
             }
             else
             {
@@ -56,10 +51,9 @@ namespace EffectOfWarLauncher
 
         private async void ICO()
         {
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("EffectOfWar", "1.0"));
             if (!File.Exists(Path.Combine(exeFolder, "icon.ico")))
             {
-                var url = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/Resources/icon.ico";
+                var url = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/icon.ico";
                 var response = await client.GetByteArrayAsync(url);
                 File.WriteAllBytes(Path.Combine(exeFolder, "icon.ico"), response);
             }
@@ -71,60 +65,93 @@ namespace EffectOfWarLauncher
 
         private async Task<bool> CheckVersion()
         {
+            if (!File.Exists(Path.Combine(exeFolder, "game", "EffectOfWar.exe")))
+            {
+                Starter.Text = "Játék telepítése";
+                return false;
+            }
+            else
+            {
+                Starter.Text = "Játék frissítése";
+                var url = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/version.json";
+
+                var response = await client.GetStringAsync(url);
+
+                serverVersion = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
+
+
+                var localPath = Path.Combine(exeFolder, "version.json");
+                string downloadedVersion;
+                try
+                {
+                    downloadedVersion = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(localPath))["version"];
+                }
+                catch { return false; }
+
+                return serverVersion["version"] == downloadedVersion;
+            }
             
-
-            var url = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/version.json";
-
-            var response = await client.GetStringAsync(url);
-
-            var serverVersion = JsonSerializer.Deserialize<Dictionary<string, string>>(response)["version"];
-
-            var localPath = Path.Combine(exeFolder, "version.json");
-            var downloadedVersion =
-                JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(localPath))["version"];
-
-            return serverVersion == downloadedVersion;
         }
         private async Task downloadResource()
         {
+            Starter.Enabled = false;
+            Refresh.Enabled = false;
+            haladas.Visible = true;
+            haladas.Text = "Játék telepítése";
             string urlBase = "https://api.github.com/repos/Frici73/EffectOfWar/contents/build";
             string gameurl = urlBase + "/game";
             string resourcesurl = urlBase + "/Resources";
             string gameFolder = Path.Combine(exeFolder, "game");
             if (!Directory.Exists(gameFolder)) Directory.CreateDirectory(gameFolder);
-
-            // download the application
-            string response = await client.GetStringAsync(gameurl);
-            var appDatas = JsonSerializer.Deserialize<List<GitHubContent>>(response);
-            foreach (var appData in appDatas)
+            try
             {
-                if (appData.download_url == null) continue;
-                byte[] bytes = await client.GetByteArrayAsync(appData.download_url);
-                File.WriteAllBytes(Path.Combine(gameFolder, appData.name), bytes);
-            }
-
-            // download resources
-            response = await client.GetStringAsync(resourcesurl);
-            List<GitHubContent> dirs = JsonSerializer.Deserialize<List<GitHubContent>>(response);
-            dirs.RemoveAll(d=>d.download_url==null || d.download_url.Length == 0);
-            string resource = Path.Combine(gameFolder, "Resource");
-            if (!Directory.Exists(resource)) Directory.CreateDirectory(resource);
-            foreach (GitHubContent dir in dirs)
-            {
-                string dirName = Path.Combine(resource, dir.name);
-                if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
-                response = await client.GetStringAsync(dir.url);
-                List<GitHubContent> datas = JsonSerializer.Deserialize<List<GitHubContent>>(response);
-                foreach (GitHubContent file in datas)
+                // download the application
+                string response = await client.GetStringAsync(gameurl);
+                var appDatas = JsonSerializer.Deserialize<List<GitHubContent>>(response);
+                foreach (var appData in appDatas)
                 {
-                    byte[] bytes = await client.GetByteArrayAsync(file.download_url);
-                    File.WriteAllBytes(Path.Combine(dirName, file.name), bytes );
+                    if (appData.download_url == null) continue;
+                    byte[] bytes = await client.GetByteArrayAsync(appData.download_url);
+                    File.WriteAllBytes(Path.Combine(gameFolder, appData.name), bytes);
                 }
+                // download resources
+                response = await client.GetStringAsync(resourcesurl);
+                List<GitHubContent> dirs = JsonSerializer.Deserialize<List<GitHubContent>>(response);
+                dirs.RemoveAll(d => d.download_url != null);
+                string resource = Path.Combine(gameFolder, "Resource");
+                if (!Directory.Exists(resource)) Directory.CreateDirectory(resource);
+                foreach (GitHubContent dir in dirs)
+                {
+                    haladas.Text = $"{dir.name} letöltése";
+                    string dirName = Path.Combine(resource, dir.name);
+                    if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+                    response = await client.GetStringAsync(dir.url);
+                    List<GitHubContent> datas = JsonSerializer.Deserialize<List<GitHubContent>>(response);
+                    foreach (GitHubContent file in datas)
+                    {
+                        if (!Rewrite.Checked && File.Exists(Path.Combine(dirName, file.name))) continue;
+                        byte[] bytes = await client.GetByteArrayAsync(file.download_url);
+                        File.WriteAllBytes(Path.Combine(dirName, file.name), bytes);
+                    }
+                }
+
+                StreamWriter w = new StreamWriter(Path.Combine(exeFolder, "version.json"));
+                w.WriteLine("{");
+                foreach (var items in serverVersion)
+                {
+                    w.Write($"\"{items.Key}\": \"{items.Value}\"");
+                }
+                w.WriteLine("}");
+                w.Close();
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show("Valószínűleg túl sok kérést ment a szerver felé ezért leállt a letöltés" + ex.Message);
             }
 
-            byte[] data = await client.GetByteArrayAsync(urlBase+"version.json");
-            File.WriteAllBytes(Path.Combine(exeFolder, "/version.json"), data);
-
+            Starter.Enabled = true;
+            Refresh.Enabled = true;
+            haladas.Visible = false;
             RefreshDatas();
         }
 
@@ -135,7 +162,7 @@ namespace EffectOfWarLauncher
                 try
                 {
                     if (Process.GetProcessesByName("EffectOfWar").Length <= 0)
-                        Process.Start(Path.Combine(exeFolder, "EffectOfWar.exe"));
+                        Process.Start(Path.Combine(exeFolder, "game", "EffectOfWar.exe"));
                     else MessageBox.Show("A játék már fut!");
                 }
                 catch (Exception ex)

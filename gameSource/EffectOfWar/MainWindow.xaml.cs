@@ -30,7 +30,8 @@ namespace EffectOfWar
             {
                 Directory.CreateDirectory(document);
             }
-            this.Icon = new BitmapImage(new Uri(System.IO.Path.Combine(exeFolder, "icon.ico")));
+            
+            this.Icon = new BitmapImage(new Uri(System.IO.Path.Combine(Directory.GetParent(exeFolder).ToString(), "icon.ico")));
             this.Loaded += Window_Loaded;
         }
 
