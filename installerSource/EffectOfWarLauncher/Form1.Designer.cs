@@ -41,7 +41,7 @@
             // 
             this.Starter.Location = new System.Drawing.Point(12, 162);
             this.Starter.Name = "Starter";
-            this.Starter.Size = new System.Drawing.Size(175, 23);
+            this.Starter.Size = new System.Drawing.Size(175, 28);
             this.Starter.TabIndex = 0;
             this.Starter.Text = "Starter";
             this.Starter.UseVisualStyleBackColor = true;

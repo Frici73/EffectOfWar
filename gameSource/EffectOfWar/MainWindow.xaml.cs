@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace EffectOfWar
 {
     /// <summary>
@@ -18,38 +19,34 @@ namespace EffectOfWar
     public partial class MainWindow : Window
     {
         internal Processing processing;
-        internal string exeFolder;
-        internal string document;
+        internal string exeFolder = AppDomain.CurrentDomain.BaseDirectory;
+        internal string document = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "EffectOfWar");
         public MainWindow()
         {
             InitializeComponent();
-            processing = new Processing(Console);
+            processing = new Processing(ConsoleD);
 
-            exeFolder = AppDomain.CurrentDomain.BaseDirectory;
-            document = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            if (!Directory.Exists(System.IO.Path.Combine(document, "EffectOfWar"))) 
+            if (!Directory.Exists(document)) 
             {
-                Directory.CreateDirectory(System.IO.Path.Combine(System.IO.Path.Combine(document, "EffectOfWar")));
+                Directory.CreateDirectory(document);
             }
-            document = System.IO.Path.Combine(System.IO.Path.Combine(document, "EffectOfWar"));
-            window.Icon = new BitmapImage(new Uri(System.IO.Path.Combine(exeFolder, "Resources", "icon.ico")));
-
-            window.Loaded += Window_Loaded;
+            this.Icon = new BitmapImage(new Uri(System.IO.Path.Combine(exeFolder, "icon.ico")));
+            this.Loaded += Window_Loaded;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // menu
-                Menu.Width = window.Width;
-                Menu.Height = window.Height;
+                Menu.Width = this.Width;
+                Menu.Height = this.Height;
                 Menu.Background = Brushes.LightGray;
 
                 BasicStatShower.IsReadOnly = true;
                 BasicStatShower.MaxLines = 30;
                 BasicStatShower.MinLines = 30;
-                BasicStatShower.Width = window.Width/7;
-                BasicStatShower.Height = window.Height;
-                BasicStatShower.Margin = new Thickness { Left = window.Width - BasicStatShower.Width, Top = window.Height - BasicStatShower.Height, Bottom=0};
+                BasicStatShower.Width = this.Width/7;
+                BasicStatShower.Height = this.Height;
+                BasicStatShower.Margin = new Thickness { Left = this.Width - BasicStatShower.Width, Top = this.Height - BasicStatShower.Height, Bottom=0};
 
                 characterListUI[] uIs = new characterListUI[4];
                 uIs[0] = new characterListUI(HType.warrior, Menu);
@@ -57,8 +54,8 @@ namespace EffectOfWar
                 uIs[2] = new characterListUI(HType.ranger, Menu);
                 uIs[3] = new characterListUI(Menu);
             // battleground
-                Battleground.Width = window.Width;
-                Battleground.Height = window.Height;
+                Battleground.Width = this.Width;
+                Battleground.Height = this.Height;
                 Battleground.Visibility = Visibility.Collapsed;
         }
     }
