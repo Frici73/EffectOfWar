@@ -44,7 +44,11 @@ namespace EffectOfWarLauncher
                 needupdate = true;
                 Starter.Text = "Játék frissítése";
             }
-            else Starter.Text = "Játék indítása";
+            else
+            {
+                Starter.Text = "Játék indítása";
+                needupdate = false;
+            }
         }
 
         private async void downloadICO()
@@ -77,15 +81,14 @@ namespace EffectOfWarLauncher
             } );
         }
 
-
         private async void downloadResource()
         {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("EffectOfWar", "1.0"));
+            string url = "https://api.github.com/repos/Frici73/EffectOfWar/contents/";
 
 
-
-
-            Starter.Text = "Játék Indítása";
-            needupdate = false;
+            RefreshDatas();
         }
 
         private void Starter_Click(object sender, EventArgs e)
