@@ -66,6 +66,9 @@ namespace EffectOfWarLauncher
 
         private async Task<bool> CheckVersion()
         {
+            var url = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/version.json";
+            var response = await client.GetStringAsync(url);
+            serverVersion = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
             if (!File.Exists(Path.Combine(exeFolder, "game", "EffectOfWar.exe")))
             {
                 Starter.Text = "Játék telepítése";
@@ -74,13 +77,6 @@ namespace EffectOfWarLauncher
             else
             {
                 Starter.Text = "Játék frissítése";
-                var url = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/version.json";
-
-                var response = await client.GetStringAsync(url);
-
-                serverVersion = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
-
-
                 var localPath = Path.Combine(exeFolder, "version.json");
                 string downloadedVersion;
                 try
@@ -100,7 +96,7 @@ namespace EffectOfWarLauncher
             haladas.Visible = true;
             haladas.Text = "Játék telepítése";
             string urlBase = "https://api.github.com/repos/Frici73/EffectOfWar/contents/build";
-            string gameurl = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/game.zip";
+            string gameurl = $"https://github.com/Frici73/EffectOfWar/releases/download/{serverVersion["version"]}/game.zip";
             string resourcesurl = urlBase + "/Resources";
             string gameFolder = Path.Combine(exeFolder, "game");
             if (!Directory.Exists(gameFolder)) Directory.CreateDirectory(gameFolder);
