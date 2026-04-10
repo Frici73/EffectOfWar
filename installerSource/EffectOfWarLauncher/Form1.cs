@@ -29,6 +29,11 @@ namespace EffectOfWarLauncher
         private void Launcher_Load(object sender, EventArgs e)
         {
             downloadICO();
+            RefreshDatas();
+        }
+        private void Refresh_Click(object sender, EventArgs e) => RefreshDatas();
+        private void RefreshDatas()
+        {
             if (!File.Exists(Path.Combine(exeFolder, "EffectOfWar.exe")))
             {
                 needupdate = true;
@@ -61,8 +66,14 @@ namespace EffectOfWarLauncher
         private Task<bool> CheckVersion() 
         {
             return Task.Run(() => 
-            { 
-                return true; 
+            {
+                var client = new HttpClient();
+                client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("EffectOfWar", "1.0"));
+                var url = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/version.json";
+                var response = client.GetStringAsync(url).Result;
+                string ServerVersion = JsonSerializer.Deserialize<Dictionary<string, string>>(response)["version"];
+                string DownloadedVersion = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(Path.Combine(exeFolder, "version.json")))["version"];
+                return ServerVersion == DownloadedVersion; 
             } );
         }
 
@@ -81,7 +92,16 @@ namespace EffectOfWarLauncher
         {
             if (!needupdate) 
             {
-                Process siker = Process.Start(Path.Combine(exeFolder, "EffectOfWar.exe"));
+                try
+                {
+                    if (Process.GetProcessesByName("EffectOfWar").Length <= 0)
+                        Process.Start(Path.Combine(exeFolder, "EffectOfWar.exe"));
+                    else MessageBox.Show("A játék már fut!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             else
             {

@@ -34,6 +34,7 @@
             this.Selector = new System.Windows.Forms.ComboBox();
             this.notesBox = new System.Windows.Forms.RichTextBox();
             this.cacheCleaner = new System.Windows.Forms.Button();
+            this.Refresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -80,11 +81,22 @@
             this.cacheCleaner.Text = "Clear cache";
             this.cacheCleaner.UseVisualStyleBackColor = true;
             // 
+            // Refresh
+            // 
+            this.Refresh.Location = new System.Drawing.Point(12, 197);
+            this.Refresh.Name = "Refresh";
+            this.Refresh.Size = new System.Drawing.Size(175, 23);
+            this.Refresh.TabIndex = 5;
+            this.Refresh.Text = "Refresh";
+            this.Refresh.UseVisualStyleBackColor = true;
+            this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
+            // 
             // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 403);
+            this.Controls.Add(this.Refresh);
             this.Controls.Add(this.cacheCleaner);
             this.Controls.Add(this.notesBox);
             this.Controls.Add(this.Selector);
@@ -107,6 +119,7 @@
         private System.Windows.Forms.ComboBox Selector;
         private System.Windows.Forms.RichTextBox notesBox;
         private System.Windows.Forms.Button cacheCleaner;
+        private System.Windows.Forms.Button Refresh;
     }
 }
 
