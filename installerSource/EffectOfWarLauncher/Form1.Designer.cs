@@ -34,11 +34,8 @@
             notesBox = new RichTextBox();
             Refresh = new Button();
             haladas = new Label();
-            groupBox1 = new GroupBox();
-            Rewrite = new RadioButton();
-            Norewrite = new RadioButton();
+            ready = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // Starter
@@ -100,43 +97,22 @@
             haladas.TextAlign = ContentAlignment.MiddleCenter;
             haladas.Visible = false;
             // 
-            // groupBox1
+            // ready
             // 
-            groupBox1.Controls.Add(Norewrite);
-            groupBox1.Controls.Add(Rewrite);
-            groupBox1.Location = new Point(12, 321);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(175, 125);
-            groupBox1.TabIndex = 7;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Letöltési beállítás";
-            // 
-            // Rewrite
-            // 
-            Rewrite.Checked = true;
-            Rewrite.Location = new Point(6, 42);
-            Rewrite.Name = "Rewrite";
-            Rewrite.Size = new Size(163, 30);
-            Rewrite.TabIndex = 0;
-            Rewrite.TabStop = true;
-            Rewrite.Text = "Újra írással";
-            Rewrite.UseVisualStyleBackColor = true;
-            // 
-            // Norewrite
-            // 
-            Norewrite.Location = new Point(6, 78);
-            Norewrite.Name = "Norewrite";
-            Norewrite.Size = new Size(163, 30);
-            Norewrite.TabIndex = 1;
-            Norewrite.Text = "Újra írás nélkül";
-            Norewrite.UseVisualStyleBackColor = true;
+            ready.Location = new Point(12, 452);
+            ready.Name = "ready";
+            ready.Size = new Size(169, 29);
+            ready.TabIndex = 8;
+            ready.Text = "Játék";
+            ready.UseVisualStyleBackColor = true;
+            ready.Click += ready_Click;
             // 
             // Launcher
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(782, 504);
-            Controls.Add(groupBox1);
+            Controls.Add(ready);
             Controls.Add(haladas);
             Controls.Add(Refresh);
             Controls.Add(notesBox);
@@ -149,7 +125,6 @@
             Text = "Effect of War Launcher";
             Load += Launcher_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            groupBox1.ResumeLayout(false);
             ResumeLayout(false);
 
         }
@@ -162,9 +137,7 @@
         private System.Windows.Forms.RichTextBox notesBox;
         private System.Windows.Forms.Button Refresh;
         private Label haladas;
-        private GroupBox groupBox1;
-        private RadioButton Norewrite;
-        private RadioButton Rewrite;
+        private Button ready;
     }
 }
 
