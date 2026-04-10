@@ -15,6 +15,7 @@ using System.Text.Json;
 using System.Windows.Forms.VisualStyles;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.IO.Compression;
 
 namespace EffectOfWarLauncher
 {
@@ -33,7 +34,7 @@ namespace EffectOfWarLauncher
         private void Launcher_Load(object sender, EventArgs e)
         {
             ICO();
-            RefreshDatas();            
+            RefreshDatas();
         }
         private void Refresh_Click(object sender, EventArgs e) => RefreshDatas();
         private async void RefreshDatas()
@@ -90,7 +91,7 @@ namespace EffectOfWarLauncher
 
                 return serverVersion["version"] == downloadedVersion;
             }
-            
+
         }
         private async Task downloadResource()
         {
@@ -99,23 +100,26 @@ namespace EffectOfWarLauncher
             haladas.Visible = true;
             haladas.Text = "Játék telepítése";
             string urlBase = "https://api.github.com/repos/Frici73/EffectOfWar/contents/build";
-            string gameurl = urlBase + "/game";
+            string gameurl = "https://raw.githubusercontent.com/Frici73/EffectOfWar/master/build/game.zip";
             string resourcesurl = urlBase + "/Resources";
             string gameFolder = Path.Combine(exeFolder, "game");
             if (!Directory.Exists(gameFolder)) Directory.CreateDirectory(gameFolder);
             try
             {
                 // download the application
-                string response = await client.GetStringAsync(gameurl);
-                var appDatas = JsonSerializer.Deserialize<List<GitHubContent>>(response);
-                foreach (var appData in appDatas)
-                {
-                    if (appData.download_url == null) continue;
-                    byte[] bytes = await client.GetByteArrayAsync(appData.download_url);
-                    File.WriteAllBytes(Path.Combine(gameFolder, appData.name), bytes);
-                }
+                haladas.Text = "Játék telepítése";
+                string zip = Path.Combine(exeFolder, "game.zip");
+                byte[] gamebytes = await client.GetByteArrayAsync(gameurl);
+                File.WriteAllBytes(zip, gamebytes);
+
+                haladas.Text = "Játék kicsomagolása";
+                ZipFile.ExtractToDirectory(zip, Path.Combine(exeFolder, "game"));
+
+                haladas.Text = "Tisztíttás";
+                File.Delete(zip);
+
                 // download resources
-                response = await client.GetStringAsync(resourcesurl);
+                string response = await client.GetStringAsync(resourcesurl);
                 List<GitHubContent> dirs = JsonSerializer.Deserialize<List<GitHubContent>>(response);
                 dirs.RemoveAll(d => d.download_url != null);
                 string resource = Path.Combine(gameFolder, "Resource");
@@ -135,6 +139,7 @@ namespace EffectOfWarLauncher
                     }
                 }
 
+                haladas.Text = "Verzió kezelés";
                 StreamWriter w = new StreamWriter(Path.Combine(exeFolder, "version.json"));
                 w.WriteLine("{");
                 foreach (var items in serverVersion)

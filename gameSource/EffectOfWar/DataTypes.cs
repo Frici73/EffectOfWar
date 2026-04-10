@@ -492,7 +492,11 @@ namespace EffectOfWar
                 percentage = 0;
             }
         }
-        public void Edit(float percent) => percentage = percent;
+        public void Edit(float percent, sbyte turn)
+        {
+            percentage = percent;
+            this.turn = turn;
+        }
         public void Upgrade(DMG dmg)
         {
             dmg.atktype = AttackType.Reflect;

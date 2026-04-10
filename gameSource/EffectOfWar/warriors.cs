@@ -521,4 +521,39 @@ namespace EffectOfWar
             }
         }
     }
+
+    class Fortune_teller : Character
+    {
+        public Fortune_teller()
+        {
+            Name = "Fortune-teller";
+            S1T = "Tauntol 2 körig (nem törölhető) és kap 10%-os Reflect-et 2 körig";
+            S2T = "Megtámad 1 random ellenfelet 100% M erővel, a sebzése nő az önmagán lévő buffok után 10%-ot, majd 1 körre Sleep debuffot ad az ellenfélnek";
+            SpecialT = "Védekezés után növeli a csapatának sebzését 7%-al 3 körig";
+            init(410, 0, 5, 8, 4, 1, 1.3f, 1, 1);
+            type = HType.warrior;
+            subclass = new Subclass[] { Subclass.Debuffer, Subclass.Tank, Subclass.Avanger };
+        }
+
+        internal override void SkillOne()
+        {
+            EffectGroup taunt = new EffectGroup("Taunt", Effect.taunt, 0, 2, true, false, this);
+            taunt.Give(this);
+            reflect.Edit(0.1f, 2);
+        }
+
+        internal override void SkillTwo()
+        {
+            Character enemy = GetCharacters(false, 1)[0];
+            EffectGroup sleep = new EffectGroup("Sleep", Effect.sleep, 0, 1, false, true, this);
+            DMG dmg = new DMG(DMGType.magical, MagicalAttack[0], MagicalKnowledge[0], DMGDealt+effects.Count(e=>e.positive), AttackType.Skill);
+            enemy.Defense(this, dmg);
+            sleep.Give(enemy);
+        }
+        internal override void AfterSelfGetDMG(Character attacker, DMG dmg, short taked)
+        {
+            EffectGroup e = new EffectGroup("DMG dealt increase", Effect.dmgD, 0.07f, 3, true, true, this);
+            foreach (Character teammate in GetCharacters(true, 4, true)) e.Give(teammate);
+        }
+    }
 }

@@ -17,7 +17,7 @@ namespace EffectOfWar
     {
         internal static List<Character> healers = new List<Character> () { new Joker() };
         internal static List<Character> rangers = new List<Character>() { new Lightning(), new Breaker(), new Reaper() };
-        internal static List<Character> warriors = new List<Character>() { new Barrier(), new Guardian(), new Bulldozer(), new Fulmare(), new ArthurKing(), new Trash(), new Afterglow(), new Cooldown(), new Frame(), new GodOfDeath(), new Smoke() };
+        internal static List<Character> warriors = new List<Character>() { new Barrier(), new Guardian(), new Bulldozer(), new Fulmare(), new ArthurKing(), new Trash(), new Afterglow(), new Cooldown(), new Frame(), new GodOfDeath(), new Smoke(), new Fortune_teller() };
         internal static List<Boss> bosses = new List<Boss>() { new Chaos(), new Fate(), new Werewolf(), new Goblins(), new Vampire(), new Moon(), new Solmir(), new Tarantula() };
     }
     enum HType
@@ -161,6 +161,7 @@ namespace EffectOfWar
         internal virtual void SkillTwo() { }
         internal virtual void UseSkill(Skill used)
         {
+            if (effects.Any(e => e.Have(Effect.sleep))) return;
             switch (used)
             {
                 case Skill.first: this.SkillOne(); break;
