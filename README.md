@@ -22,5 +22,5 @@ Az **EffectOfWarLauncher** szükséges a játék futtatásához.
 
 # ⚠️ Fontos
 
-- A játék jelenleg **nem rendelkezik teljes frontenddel**, ezért használata korlátozott.
+- A játék jelenleg **nem rendelkezik teljes frontenddel**, ezért használata ESÉLYTELEN.
 - A launcher **fejlesztés alatt áll**, nem tekinthető végleges verziónak.
