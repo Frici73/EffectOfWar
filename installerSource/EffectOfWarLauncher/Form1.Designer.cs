@@ -33,7 +33,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.Selector = new System.Windows.Forms.ComboBox();
             this.notesBox = new System.Windows.Forms.RichTextBox();
-            this.cacheCleaner = new System.Windows.Forms.Button();
             this.Refresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -72,15 +71,6 @@
             this.notesBox.TabIndex = 3;
             this.notesBox.Text = "";
             // 
-            // cacheCleaner
-            // 
-            this.cacheCleaner.Location = new System.Drawing.Point(647, 12);
-            this.cacheCleaner.Name = "cacheCleaner";
-            this.cacheCleaner.Size = new System.Drawing.Size(123, 23);
-            this.cacheCleaner.TabIndex = 4;
-            this.cacheCleaner.Text = "Clear cache";
-            this.cacheCleaner.UseVisualStyleBackColor = true;
-            // 
             // Refresh
             // 
             this.Refresh.Location = new System.Drawing.Point(12, 197);
@@ -92,12 +82,11 @@
             this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
             // Launcher
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 403);
             this.Controls.Add(this.Refresh);
-            this.Controls.Add(this.cacheCleaner);
             this.Controls.Add(this.notesBox);
             this.Controls.Add(this.Selector);
             this.Controls.Add(this.pictureBox1);
@@ -118,7 +107,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ComboBox Selector;
         private System.Windows.Forms.RichTextBox notesBox;
-        private System.Windows.Forms.Button cacheCleaner;
         private System.Windows.Forms.Button Refresh;
     }
 }
