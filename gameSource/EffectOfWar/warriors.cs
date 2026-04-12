@@ -16,9 +16,9 @@ namespace EffectOfWar
             S1T = "Ad minden társának 75% F-erő pajzsot";
             S2T = "Megtámad 1 ellenfelet 100% F-erővel";
             SpecialT = "Minden védekezés után nő az Immunrendszere 3%-ot";
-            init(525, 17, 8, 0, 5, 1f, 0.8f, 1f, 1f);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Shielder, Subclass.Automated, Subclass.Buffer };
+            init(525, 17, 8, 0, 5, 1f, 0.8f, 1f, 1f);
         }
 
         internal override void SkillOne()
@@ -41,12 +41,13 @@ namespace EffectOfWar
     {
         public Guardian()
         {
+            Name = "Guardian";
             S1T = "Megtámad 3 ellenfelet 100% M-erővel és 100% F-erővel és a sebzés mértékét megkapja pajzsként";
             S2T = "15% Tanky buffot ad magának";
             SpecialT = "Minden képesség használat után ad magának 50% F-erő pajzsot";
-            init(430, 13, 7, 6, 7, 0.8f, 1.2f, 0.8f, 1.2f);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Tank, Subclass.Automated };
+            init(430, 13, 7, 6, 7, 0.8f, 1.2f, 0.8f, 1.2f);
         }
 
         internal override void AfterSkillUse(Skill skill)
@@ -80,9 +81,9 @@ namespace EffectOfWar
             S1T = "Megtámad 1 ellenfelet 100% F-erővel";
             S2T = "Ad magának 30%-os Tanky buffot 1 körig";
             SpecialT = "Minden kör elején nő az Immunrendszere és Manaérzékenysége 5%-ot";
-            init(580, 15, 2, 0, 2, 1f, 1f, 1f, 1f);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Tank, Subclass.Automated };
+            init(580, 15, 2, 0, 2, 1f, 1f, 1f, 1f);
         }
         internal override void SkillOne()
         {
@@ -110,9 +111,9 @@ namespace EffectOfWar
             S1T = "Ad magának 130% M-erős Counter-t 1 körig és +30% Mágiaismeret ide";
             S2T = "Ad a csapatának 75% Mágikuserő pajzsot";
             SpecialT = "Ha ő meghalna vagy egy társa akkor ad a csapatnak 300% M-erő pajzsot és sebzi az összes ellenfelet 200% M-erővel és 100% M-védelem ignorálással";
-            init(475, 3, 4, 10, 3, 1.25f, 1.2f, 1, 1);
             type = HType.warrior;
-            subclass = new Subclass[] { Subclass.Shielder, Subclass.Avanger };
+            subclass = new Subclass[] { Subclass.Shielder, Subclass.Avanger }; 
+            init(475, 3, 4, 10, 3, 1.25f, 1.2f, 1, 1);
         }
         internal override void SkillOne()
         {
@@ -159,9 +160,9 @@ namespace EffectOfWar
             S1T = "Ad magának 7% maxhp pajzsot és tauntol 2 körig";
             S2T = "Megtámad 1 ellenfelet 100% F erővel és a sebzés 60%-át megkapja pajzsként";
             SpecialT = "Körönként nő a regenerációs képessége 0,2%-ot, maxhp-ja 5%-ot és nő a punctualja 3%-ot";
-            init(480, 14, 6, 0, 2, 1f, 1f, 1.2f, 0.7f);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Tank, Subclass.Shielder, Subclass.Automated, Subclass.Buffer };
+            init(480, 14, 6, 0, 2, 1f, 1f, 1.2f, 0.7f);
         }
 
         internal override void SkillOne()
@@ -192,11 +193,11 @@ namespace EffectOfWar
             S2T = "Minden társát gyógyítja 125% F erővel és a túlgyógyulás pajzsá alakul / csökkenti minden társának a sérülését 15%-al 2 körig";
             SpecialT = "Minden képesség kijátszás után Phase-t vált (1 / 2) (körkörösen vált)";
             TalentT = "3-as stackje van, 4 körönként tölt 1-et, játék elején maxon van, a talent hatására Phase-t vált és gyógyul 100% F erővel";
-            init(420, 6, 6, 6, 6, 1, 1, 1, 1);
             talent = new Talent(this, 4, 3);
             shift = new Shift(this, 2, ShiftMode.circle, 0);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Automated, Subclass.ShapeShifter, Subclass.Shielder, Subclass.Medic, Subclass.Sustain };
+            init(420, 6, 6, 6, 6, 1, 1, 1, 1);
         }
 
         internal override void Talent()
@@ -258,9 +259,9 @@ namespace EffectOfWar
             S1T = "Ellopja minden ellenfél pajzsának a 30%-át és az előző körből való pajzsának 70%-át át rakja a jelenlegi körre";
             S2T = "Megtámad 1 ellenfelet 100% M & F erővel";
             SpecialT = "Minden képesség kijátszás után gyógyul az elvesztett életének 1,5%-ával";
-            init(440, 4, 4, 8, 6, 1, 1, 1, 1);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Shielder, Subclass.Automated, Subclass.Sustain};
+            init(440, 4, 4, 8, 6, 1, 1, 1, 1);
         }
 
         internal override void SkillOne()
@@ -297,10 +298,10 @@ namespace EffectOfWar
             S2T = "Gyógyul az elvesztett életének 25%-ával és tauntol 2 körig";
             SpecialT = "Minden képesség használat után töröl magáról 1 DoT hatást";
             TalentT = "Minden debuff lejáratát a csapaton felgyorsítja 1 körrel (DoT-ra nem hat) (4 körös cooldown, 1-es stack)";
-            init(530, 15, 5, 3, 5, 1.15f, 1, 1.15f, 1);
             talent = new Talent(this, 4, 1);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Tank, Subclass.Shielder, Subclass.Automated};
+            init(530, 15, 5, 3, 5, 1.15f, 1, 1.15f, 1);
         }
 
         internal override void Talent()
@@ -344,6 +345,9 @@ namespace EffectOfWar
             S1T = "Ad minden társának 75% M erő pajzsot";
             S2T = "Megtámad 2 ellenfelet 100% M erővel";
             SpecialT = "kör elején minden társa kap 7% sebzés csökkentést 2 körig. + Ha meghal helyett fog foglalni a csatatéren és véd a mögötte álló helyett, majd a bejövő sebzés felét tovább adja rá tiszta sebzésként";
+            type = HType.warrior;
+            subclass = new Subclass[] { Subclass.Resist, Subclass.Automated };
+            init(530, 0, 6, 12, 5, 1, 1.3f, 1, 1);
         }
         internal override void OnSelfDeath(Character killer)
         {
@@ -381,9 +385,9 @@ namespace EffectOfWar
             S1T = "Növeli a különleges képességének hatását 15%-al és tauntol 2 körig (max 30%-ig)";
             S2T = "Gyógyítja magát és pajzsot ad magának 100% M erővel";
             SpecialT = "Mikor megtámadják 15% eséllyel Sleep-et ad a támadónak 1 körig";
-            init(350, 0, 7, 5, 7, 1.2f, 1.4f, 1, 1);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Shielder, Subclass.Automated };
+            init(350, 0, 7, 5, 7, 1.2f, 1.4f, 1, 1);
         }
 
         internal override void SkillOne()
@@ -432,9 +436,9 @@ namespace EffectOfWar
             S1T = "Megtámad 1 ellenfelet 120% F erővel és a sebzés 100%-át megkapja pajzsként";
             S2T = "Taunt-ol 2 körig és gyógyul 50% M erővel";
             SpecialT = "Minden védekezés után használja a utoljára kijátszott képességét";
-            init(330, 8, 4, 8, 4, 0.8f, 1.1f, 0.8f, 1.1f);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Shielder, Subclass.Automated, Subclass.Sustain, Subclass.Avanger };
+            init(330, 8, 4, 8, 4, 0.8f, 1.1f, 0.8f, 1.1f);
         }
 
         internal override void SkillOne()
@@ -467,9 +471,9 @@ namespace EffectOfWar
             S1T = "Tauntol 2 körig (nem törölhető)";
             S2T = "Nő a DoT immunity-je 60%-ot 2 körig (nem törölhető)";
             SpecialT = "amikor ő maga meghal akkor az egész harc alatt elszenvedett összes sérülésének 70%-át az ellenfél legelső harcosára";
-            init(430, 0, 6, 0, 6, 0.75f, 1, 0.75f, 1);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Tank, Subclass.Avanger, Subclass.Resist };
+            init(430, 0, 6, 0, 6, 0.75f, 1, 0.75f, 1);
         }
 
         internal override void SkillOne()
@@ -502,9 +506,9 @@ namespace EffectOfWar
             SpecialT = "-";
             TalentT = "Megtámad minden ellenfelet a jelenlegi életük 50%-ával és a sebzés 20%-át pajzsként adja a csapatnak (stack 0, max stack 4, cooldown 5)";
             talent = new Talent(this, 5, 0);
-            init(350, 0, 7, 0, 7, 1, 1, 1, 1);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Shielder, Subclass.Burst };
+            init(350, 0, 7, 0, 7, 1, 1, 1, 1);
         }
 
         internal override void Talent()
@@ -530,9 +534,9 @@ namespace EffectOfWar
             S1T = "Tauntol 2 körig (nem törölhető) és kap 10%-os Reflect-et 2 körig";
             S2T = "Megtámad 1 random ellenfelet 100% M erővel, a sebzése nő az önmagán lévő buffok után 10%-ot, majd 1 körre Sleep debuffot ad az ellenfélnek";
             SpecialT = "Védekezés után növeli a csapatának sebzését 7%-al 3 körig";
-            init(410, 0, 5, 8, 4, 1, 1.3f, 1, 1);
             type = HType.warrior;
             subclass = new Subclass[] { Subclass.Debuffer, Subclass.Tank, Subclass.Avanger };
+            init(410, 0, 5, 8, 4, 1, 1.3f, 1, 1);
         }
 
         internal override void SkillOne()

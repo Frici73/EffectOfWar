@@ -14,9 +14,9 @@ namespace EffectOfWar
             S1T = "125% F-erő-vel és 125% M-erővel megtámad 1 ellenfelet";
             S2T = "Megtámad 2 ellenfelet 130% M-erővel és növeli a saját sebzés kiosztását 5%-al 4 körig";
             SpecialT = "Minden körben nő a Mágiaismerete 7%-ot";
-            init(360, 7, 5, 13, 6, 1, 1.2f, 1, 0.75f);
             type = HType.ranger;
             subclass = new Subclass[] { Subclass.Buffer, Subclass.Burst};
+            init(360, 7, 5, 13, 6, 1, 1.2f, 1, 0.75f);
         }
 
         public override void StartOfTurn()
@@ -50,9 +50,9 @@ namespace EffectOfWar
             S1T = "Megtámad 1 ellenfelet 120% F-erővel";
             S2T = "Megtámad 1 ellenfelet 100% M-erővel és csökkenti az összes védelmét 3%-al 5 körig";
             SpecialT = "Minden képessége okozta sérülés nő 3%-ot a pályán lévő debuffok után";
-            init(260, 17, 4, 10, 5, 0.8f, 1, 0.8f, 1);
             type = HType.ranger;
             subclass = new Subclass[] {Subclass.Debuffer};
+            init(260, 17, 4, 10, 5, 0.8f, 1, 0.8f, 1);
         }
 
         internal override void SpecialTechnique()
@@ -94,9 +94,9 @@ namespace EffectOfWar
             S1T = "Megtámad 1 ellenfelet 100% M-erővel és a sebzés nő (ellenfél max hp / saját maxhp)-val";
             S2T = "Megtámad 3 ellenfelet 100% M-erővel és mágikusan gyógyul a sebzés 25%-val";
             SpecialT = "Minden kör elején az random ellenfél M-erejét csökkenti 25%-al és a változás értékével növeli a sajátját 1 körig";
-            init(240, 0, 3, 12, 3, 1, 0.85f, 1, 1);
             type = HType.ranger;
             subclass = new Subclass[] { Subclass.Stealer, Subclass.TankKiller };
+            init(240, 0, 3, 12, 3, 1, 0.85f, 1, 1);
         }
 
         public override void StartOfTurn()

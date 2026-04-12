@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,14 +16,14 @@ namespace EffectOfWar
 {
     public static class AllCharacter
     {
-        internal static List<Character> healers = new List<Character> () { new Joker() };
+        internal static List<Character> supports = new List<Character> () { new Joker() };
         internal static List<Character> rangers = new List<Character>() { new Lightning(), new Breaker(), new Reaper() };
         internal static List<Character> warriors = new List<Character>() { new Barrier(), new Guardian(), new Bulldozer(), new Fulmare(), new ArthurKing(), new Trash(), new Afterglow(), new Cooldown(), new Frame(), new GodOfDeath(), new Smoke(), new Fortune_teller() };
         internal static List<Boss> bosses = new List<Boss>() { new Chaos(), new Fate(), new Werewolf(), new Goblins(), new Vampire(), new Moon(), new Solmir(), new Tarantula() };
     }
     enum HType
     {
-        ranger, warrior, support
+        ranger, warrior, support, boss
     }
     enum ShiftMode
     {
@@ -139,7 +140,7 @@ namespace EffectOfWar
             Immun[1] = immune;
             MagicalKnowledge[0] = know;
             MagicalKnowledge[1] = know;
-            img = Name.Replace(" ", "").ToLower() + ".png";
+            img = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", type.ToString(), Name.Replace(" ", "").ToLower() + ".png");
             counter = new Counter(this);
             reflect = new Reflect(this);
         }
@@ -558,6 +559,12 @@ namespace EffectOfWar
             if (chance < s1) return Skill.first;
             else if (chance < s2) return Skill.second;
             else return Skill.third;
+        }
+
+        internal override void init(short hp, byte pa, byte pd, byte ma, byte md, float sens, float know, float immune, float punct)
+        {
+            type = HType.boss;
+            base.init(hp, pa, pd, ma, md, sens, know, immune, punct);
         }
     }
 }

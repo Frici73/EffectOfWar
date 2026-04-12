@@ -7,9 +7,160 @@
         mc:Ignorable="d"
         Title="Effect of War" Height="450" Width="800" ResizeMode="CanMinimize" WindowState="Maximized">
     <Grid>
-        <Grid x:Name="Menu" Grid.ColumnSpan="2">
-            <TextBox x:Name="BasicStatShower" HorizontalAlignment="Left" Margin="592,217,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-            
+        <Grid x:Name="Menu"
+      Grid.ColumnSpan="2"
+      HorizontalAlignment="Stretch"
+      MinWidth="1000">
+
+            <!-- 5 oszlop -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1.3*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ===================== -->
+            <!-- WARriors -->
+            <!-- ===================== -->
+            <ListBox x:Name="WarriorsList"
+             Grid.Column="0"
+             HorizontalAlignment="Stretch"
+             ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Width" Value="120"/>
+                        <Setter Property="Height" Value="120"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5">
+                            <Image Source="{Binding ImagePath}"
+                           Stretch="UniformToFill"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <!-- ===================== -->
+            <!-- RANGERS -->
+            <!-- ===================== -->
+            <ListBox x:Name="RangersList"
+             Grid.Column="1"
+             HorizontalAlignment="Stretch"
+             ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Width" Value="120"/>
+                        <Setter Property="Height" Value="120"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5">
+                            <Image Source="{Binding ImagePath}"
+                           Stretch="UniformToFill"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <!-- ===================== -->
+            <!-- SUPPORTS -->
+            <!-- ===================== -->
+            <ListBox x:Name="SupportsList"
+             Grid.Column="2"
+             HorizontalAlignment="Stretch"
+             ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Width" Value="120"/>
+                        <Setter Property="Height" Value="120"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5">
+                            <Image Source="{Binding ImagePath}"
+                           Stretch="UniformToFill"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <!-- ===================== -->
+            <!-- BOSSES -->
+            <!-- ===================== -->
+            <ListBox x:Name="BossesList"
+             Grid.Column="3"
+             HorizontalAlignment="Stretch"
+             ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Width" Value="120"/>
+                        <Setter Property="Height" Value="120"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5">
+                            <Image Source="{Binding ImagePath}"
+                           Stretch="UniformToFill"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <!-- ===================== -->
+            <!-- BASIC STAT BOX -->
+            <!-- ===================== -->
+            <TextBox x:Name="BasicStatShower"
+             Grid.Column="4"
+             Margin="5"
+             MinWidth="250"
+             TextWrapping="Wrap"
+             VerticalScrollBarVisibility="Auto"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"/>
+
         </Grid>
         <Grid x:Name="Battleground" Grid.ColumnSpan="2">
             <TextBox x:Name="ConsoleD"/>

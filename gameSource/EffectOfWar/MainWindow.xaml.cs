@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,10 @@ namespace EffectOfWar
         internal Processing processing;
         internal string exeFolder = AppDomain.CurrentDomain.BaseDirectory;
         internal string document = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "EffectOfWar");
+        internal ObservableCollection<ListItem> warriors = new ObservableCollection<ListItem>();
+        internal ObservableCollection<ListItem> rangers = new ObservableCollection<ListItem>();
+        internal ObservableCollection<ListItem> supports = new ObservableCollection<ListItem>();
+        internal ObservableCollection<ListItem> bosses = new ObservableCollection<ListItem>();
         public MainWindow()
         {
             InitializeComponent();
@@ -41,7 +46,6 @@ namespace EffectOfWar
                 Menu.Width = this.Width;
                 Menu.Height = this.Height;
                 Menu.Background = Brushes.LightGray;
-
                 BasicStatShower.IsReadOnly = true;
                 BasicStatShower.MaxLines = 30;
                 BasicStatShower.MinLines = 30;
@@ -49,41 +53,23 @@ namespace EffectOfWar
                 BasicStatShower.Height = this.Height;
                 BasicStatShower.Margin = new Thickness { Left = this.Width - BasicStatShower.Width, Top = this.Height - BasicStatShower.Height, Bottom=0};
 
-                characterListUI[] uIs = new characterListUI[4];
-                uIs[0] = new characterListUI(HType.warrior, Menu);
-                uIs[1] = new characterListUI(HType.ranger, Menu);
-                uIs[2] = new characterListUI(HType.ranger, Menu);
-                uIs[3] = new characterListUI(Menu);
+                foreach (Character w in AllCharacter.warriors) if (File.Exists(w.img)) warriors.Add(new ListItem { Name = w.Name, ImagePath = w.img });
+                foreach (Character s in AllCharacter.supports) if (File.Exists(s.img)) supports.Add(new ListItem { Name = s.Name, ImagePath = s.img });
+                foreach (Character r in AllCharacter.rangers) if (File.Exists(r.img)) rangers.Add(new ListItem { Name = r.Name, ImagePath = r.img });
+                foreach (Character b in AllCharacter.bosses) if (File.Exists(b.img)) bosses.Add(new ListItem { Name = b.Name, ImagePath = b.img });
+                WarriorsList.ItemsSource = warriors;
+                SupportsList.ItemsSource = supports;
+                RangersList.ItemsSource = rangers;
+                BossesList.ItemsSource = bosses;
             // battleground
                 Battleground.Width = this.Width;
                 Battleground.Height = this.Height;
                 Battleground.Visibility = Visibility.Collapsed;
         }
     }
-    internal class characterListUI
+    public class ListItem
     {
-        private Border border;
-        private Label title;
-        private List<Image> images;
-        public characterListUI (HType type, Grid p) : this(type.ToString() + 's', p) { }
-        public characterListUI(Grid p) : this("bosses", p) { }
-        private characterListUI(string title, Grid parent)
-        {   
-            this.title = new Label();
-            parent.Children.Add(this.title);
-            this.title.Content = title;
-            this.title.Width = 100;
-            this.title.Height = 100;
-            this.title.Visibility = Visibility.Visible;
-
-            images = new List<Image>();
-            for (int i = 0; i < 20; i++)
-            {
-                images.Add(new Image());
-                parent.Children.Add(images[i]);
-                images[i].Source = null;
-            }
-            //images[i].Source = new BitmapImage(new Uri(System.IO.Path.Combine(exeFolder, "Resources", title, )));
-        }
+        public string Name { get; set; }
+        public string ImagePath { get; set; }
     }
 }
