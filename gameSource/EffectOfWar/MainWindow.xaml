@@ -8,11 +8,22 @@
         Title="Effect of War" Height="450" Width="800" ResizeMode="CanMinimize" WindowState="Maximized">
     <Grid>
         <Grid x:Name="Menu"
-      Grid.ColumnSpan="2"
-      HorizontalAlignment="Stretch"
       MinWidth="1000">
 
-            <!-- 5 oszlop -->
+            <!-- ===== GRID STRUKTÚRA ===== -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- címkék -->
+                <RowDefinition Height="*"/>
+                <!-- listák -->
+                <RowDefinition Height="Auto"/>
+                <!-- label 1 -->
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="60"/>
+                <!-- label 2 + radio -->
+            </Grid.RowDefinitions>
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -22,149 +33,214 @@
             </Grid.ColumnDefinitions>
 
             <!-- ===================== -->
-            <!-- WARriors -->
+            <!-- CÍMKÉK -->
             <!-- ===================== -->
-            <ListBox x:Name="WarriorsList"
-             Grid.Column="0"
-             HorizontalAlignment="Stretch"
-             ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Warriors" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="Rangers" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="Supports" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Grid.Column="3" Text="Bosses" HorizontalAlignment="Center"/>
+
+            <!-- ===================== -->
+            <!-- LISTÁK -->
+            <!-- ===================== -->
+
+            <!-- WARRIORS -->
+            <ListBox x:Name="WarriorsList" Grid.Row="1" Grid.Column="0"
+             ScrollViewer.VerticalScrollBarVisibility="Auto"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="DarkOrange">
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
+                        <Setter Property="Margin" Value="0"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5">
+                        <StackPanel Orientation="Vertical">
+
+                            <!-- NÉV -->
+                            <TextBlock Text="{Binding Name}"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Margin="0,0,0,5"/>
+
+                            <!-- KÉP -->
                             <Image Source="{Binding ImagePath}"
-                           Stretch="UniformToFill"/>
-                        </Border>
+                   Width="100"
+                   Height="100"
+                   Stretch="UniformToFill"/>
+
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-
             </ListBox>
 
-            <!-- ===================== -->
             <!-- RANGERS -->
-            <!-- ===================== -->
-            <ListBox x:Name="RangersList"
-             Grid.Column="1"
-             HorizontalAlignment="Stretch"
-             ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox x:Name="RangersList" Grid.Row="1" Grid.Column="1"
+             ScrollViewer.VerticalScrollBarVisibility="Auto"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="DarkRed">
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
+                        <Setter Property="Margin" Value="0"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5">
+                        <StackPanel Orientation="Vertical">
+
+                            <!-- NÉV -->
+                            <TextBlock Text="{Binding Name}"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Margin="0,0,0,5"/>
+
+                            <!-- KÉP -->
                             <Image Source="{Binding ImagePath}"
-                           Stretch="UniformToFill"/>
-                        </Border>
+                   Width="100"
+                   Height="100"
+                   Stretch="UniformToFill"/>
+
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-
             </ListBox>
 
-            <!-- ===================== -->
             <!-- SUPPORTS -->
-            <!-- ===================== -->
-            <ListBox x:Name="SupportsList"
-             Grid.Column="2"
-             HorizontalAlignment="Stretch"
-             ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox x:Name="SupportsList" Grid.Row="1" Grid.Column="2"
+             ScrollViewer.VerticalScrollBarVisibility="Auto"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Green">
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
+                        <Setter Property="Margin" Value="0"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5">
+                        <StackPanel Orientation="Vertical">
+
+                            <!-- NÉV -->
+                            <TextBlock Text="{Binding Name}"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Margin="0,0,0,5"/>
+
+                            <!-- KÉP -->
                             <Image Source="{Binding ImagePath}"
-                           Stretch="UniformToFill"/>
-                        </Border>
+                   Width="100"
+                   Height="100"
+                   Stretch="UniformToFill"/>
+
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-
             </ListBox>
 
-            <!-- ===================== -->
             <!-- BOSSES -->
-            <!-- ===================== -->
-            <ListBox x:Name="BossesList"
-             Grid.Column="3"
-             HorizontalAlignment="Stretch"
-             ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox x:Name="BossesList" Grid.Row="1" Grid.Column="3"
+ ScrollViewer.VerticalScrollBarVisibility="Auto"
+ ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Purple">
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
+                        <Setter Property="Margin" Value="0"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5">
+                        <StackPanel Orientation="Vertical">
+
+                            <!-- NÉV -->
+                            <TextBlock Text="{Binding Name}"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Margin="0,0,0,5"/>
+
+                            <!-- KÉP -->
                             <Image Source="{Binding ImagePath}"
-                           Stretch="UniformToFill"/>
-                        </Border>
+                   Width="100"
+                   Height="100"
+                   Stretch="UniformToFill"/>
+
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-
             </ListBox>
 
             <!-- ===================== -->
-            <!-- BASIC STAT BOX -->
+            <!-- STAT BOX -->
             <!-- ===================== -->
-            <TextBox x:Name="BasicStatShower"
+            <TextBox x:Name="BasicStatShower" Grid.Row="1"
              Grid.Column="4"
-             Margin="5"
-             MinWidth="250"
              TextWrapping="Wrap"
-             VerticalScrollBarVisibility="Auto"
-             HorizontalAlignment="Stretch"
-             VerticalAlignment="Stretch"/>
+             VerticalScrollBarVisibility="Auto" Background="Gray"/>
+            
+            <Label Grid.Row="2"
+           Grid.Column="0"
+           Grid.ColumnSpan="5"
+           Content="Csapat 1: "
+           HorizontalContentAlignment="Center"/>
+
+            <Label Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="5"
+            Content="Csapat 2: "
+            HorizontalContentAlignment="Center"/>
+
+            <!-- RADIO BUTTONS -->
+            <UniformGrid Columns="3" Grid.Row="4" Grid.ColumnSpan="5">
+                <RadioButton Content="1 csapat választ" HorizontalAlignment="Center"/>
+                <RadioButton Content="2 csapat választ" HorizontalAlignment="Center"/>
+                <RadioButton Content="Csak megtekintés" HorizontalAlignment="Center"/>
+            </UniformGrid>
 
         </Grid>
-        <Grid x:Name="Battleground" Grid.ColumnSpan="2">
+
+        <Grid x:Name="Battleground" Grid.ColumnSpan="2" Visibility="Collapsed">
             <TextBox x:Name="ConsoleD"/>
 
         </Grid>
+
     </Grid>
 </Window>

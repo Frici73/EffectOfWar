@@ -47,11 +47,7 @@ namespace EffectOfWar
                 Menu.Height = this.Height;
                 Menu.Background = Brushes.LightGray;
                 BasicStatShower.IsReadOnly = true;
-                BasicStatShower.MaxLines = 30;
-                BasicStatShower.MinLines = 30;
-                BasicStatShower.Width = this.Width/7;
-                BasicStatShower.Height = this.Height;
-                BasicStatShower.Margin = new Thickness { Left = this.Width - BasicStatShower.Width, Top = this.Height - BasicStatShower.Height, Bottom=0};
+                
 
                 foreach (Character w in AllCharacter.warriors) if (File.Exists(w.img)) warriors.Add(new ListItem { Name = w.Name, ImagePath = w.img });
                 foreach (Character s in AllCharacter.supports) if (File.Exists(s.img)) supports.Add(new ListItem { Name = s.Name, ImagePath = s.img });
@@ -64,7 +60,6 @@ namespace EffectOfWar
             // battleground
                 Battleground.Width = this.Width;
                 Battleground.Height = this.Height;
-                Battleground.Visibility = Visibility.Collapsed;
         }
     }
     public class ListItem
