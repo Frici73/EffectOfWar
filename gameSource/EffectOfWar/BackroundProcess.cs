@@ -22,8 +22,8 @@ namespace EffectOfWar
     }
     internal class Processing
     {
-        private List<Character> team1;
-        private List<Character> team2;
+        internal List<Character> team1 { get; private set; }
+        internal List<Character> team2 { get; private set; }
         internal byte DeadCharacters;
         internal byte LiveCharacters => (byte)(team1.Count+team2.Count);
         internal GameMode gamemode;
@@ -40,18 +40,29 @@ namespace EffectOfWar
         {
             if (gamemode == GameMode.PvP) gamemode = GameMode.BossBattle;
             else gamemode = GameMode.PvP;
+            team1.Clear();
+            team2.Clear();
         }
         internal void Add(Character c, Team team)
         {
-            if (team == Team.first && ((team1.Count < 3 && gamemode == GameMode.PvP) || (team1.Count < 4 && gamemode == GameMode.BossBattle)) && !team1.Any(e=>e.Name==c.Name))
+            if (team == Team.first)
             {
-                team1.Add(c.Clone());
+                if (team1.Count(d=>d.Name == c.Name) > 0) team1.RemoveAll(d=>d.Name == c.Name);
+                else if (((team1.Count < 3 && gamemode == GameMode.PvP) || (team1.Count < 4 && gamemode == GameMode.BossBattle)) && !team1.Any(e => e.Name == c.Name) && !AllCharacter.bosses.Contains(c))
+                {
+                    team1.Add(c.Clone());
+                    c.TeamChange(team, this);
+                }
             }
-            else if ((team == Team.second && ((team2.Count < 3 && gamemode == GameMode.PvP) || (team2.Count < 1 && gamemode == GameMode.BossBattle)) && !team2.Any(e => e.Name == c.Name)))
+            else
             {
-                team2.Add(c.Clone());
+                if (team2.Count(d => d.Name == c.Name) > 0) team2.RemoveAll(d => d.Name == c.Name);
+                else if ((team2.Count < 3 && gamemode == GameMode.PvP && !AllCharacter.bosses.Contains(c) || (team2.Count < 1 && gamemode == GameMode.BossBattle && AllCharacter.bosses.Contains(c))) && !team2.Any(e => e.Name == c.Name))
+                {
+                    team2.Add(c.Clone());
+                    c.TeamChange(team, this);
+                }
             }
-            c.TeamChange(team, this);
         }
         internal void Remove(Character c, Team team)
         {
@@ -106,6 +117,10 @@ namespace EffectOfWar
         {
             if (team1.Contains(c)) return Team.first;
             return Team.second;
+        }
+        internal bool Correct()
+        {
+            return (team1.Count == 3 && gamemode == GameMode.PvP || team1.Count == 4 && gamemode == GameMode.BossBattle) && (team2.Count == 3 && gamemode == GameMode.PvP || team2.Count == 1 && gamemode == GameMode.BossBattle);
         }
     }
 }

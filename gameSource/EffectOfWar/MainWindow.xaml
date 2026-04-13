@@ -17,11 +17,12 @@
                 <RowDefinition Height="*"/>
                 <!-- listák -->
                 <RowDefinition Height="Auto"/>
-                <!-- label 1 -->
+                <!-- alsó rész -->
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="60"/>
-                <RowDefinition Height="60"/>
-                <!-- label 2 + radio -->
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -215,31 +216,33 @@
              Grid.Column="4"
              TextWrapping="Wrap"
              VerticalScrollBarVisibility="Auto" Background="Gray"/>
-            
+
             <Label Grid.Row="2"
            Grid.Column="0"
            Grid.ColumnSpan="5"
            Content="Csapat 1: "
-           HorizontalContentAlignment="Center"/>
+           HorizontalContentAlignment="Center"
+                   x:Name="firstShower"/>
 
             <Label Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="5"
             Content="Csapat 2: "
-            HorizontalContentAlignment="Center"/>
+            HorizontalContentAlignment="Center"
+                   x:Name="secondShower"/>
 
             <!-- RADIO BUTTONS -->
             <UniformGrid Columns="3" Grid.Row="4" Grid.ColumnSpan="5">
-                <RadioButton Content="1 csapat választ" HorizontalAlignment="Center"/>
-                <RadioButton Content="2 csapat választ" HorizontalAlignment="Center"/>
-                <RadioButton Content="Csak megtekintés" HorizontalAlignment="Center"/>
+                <RadioButton x:Name="firstTeam" Content="1 csapat választ" HorizontalAlignment="Center"/>
+                <RadioButton x:Name="secondTeam" Content="2 csapat választ" HorizontalAlignment="Center"/>
+                <RadioButton x:Name="noTeam" Content="Csak megtekintés" HorizontalAlignment="Center" IsChecked="True"/>
             </UniformGrid>
-
+            <Button x:Name="GamemodeB" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="5" Click="ChangeGamemode"/>
+            <Button Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="6" Click="StartGame" Content="Start Game"/>
         </Grid>
 
         <Grid x:Name="Battleground" Grid.ColumnSpan="2" Visibility="Collapsed">
-            <TextBox x:Name="ConsoleD"/>
-
+            <TextBox x:Name="ConsoleD" Visibility="Collapsed" Panel.ZIndex="1"/>
         </Grid>
 
     </Grid>

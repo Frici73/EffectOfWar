@@ -21,7 +21,7 @@ namespace EffectOfWar
         internal static List<Character> warriors = new List<Character>() { new Barrier(), new Guardian(), new Bulldozer(), new Fulmare(), new ArthurKing(), new Trash(), new Afterglow(), new Cooldown(), new Frame(), new GodOfDeath(), new Smoke(), new Fortune_teller() };
         internal static List<Boss> bosses = new List<Boss>() { new Chaos(), new Fate(), new Werewolf(), new Goblins(), new Vampire(), new Moon(), new Solmir(), new Tarantula() };
     }
-    enum HType
+    public enum HType
     {
         ranger, warrior, support, boss
     }
@@ -112,6 +112,22 @@ namespace EffectOfWar
         internal byte KillCount = 0;
 
         // functions
+
+        public override string ToString()
+        {
+            string Text = $"{Name}:\nS1: {S1T}\nS2: {S2T}\nSpecial: {SpecialT}\n";
+            if (TalentT != null && TalentT != "") Text += $"{TalentT}\n";
+            Text += $"HP: {Hitpoints[0]} / {MaxHitpoints[0]}\n" +
+                $"Magical Attack: {MagicalAttack[0]}\n" +
+                $"Magical Defense: {MagicalDefense[0]}\n" +
+                $"Physical Attack: {PhysicalAttack[0]}\n" +
+                $"Physical Defense: {PhysicalDefense[0]}\n" +
+                $"Magical knowledge: {MagicalKnowledge[0]}\n" +
+                $"Mana sensitivy: {ManaSensitivity[0]}\n" +
+                $"Punctual: {Punctual[0]}\n" +
+                $"Immunsystem: {Immun[0]}\n";
+            return Text;
+        }
         internal virtual void TeamChange(Team team, Processing process)
         {
             if (team == Team.first) teamID = 1;
@@ -518,7 +534,21 @@ namespace EffectOfWar
         internal string S3T = "";
         internal string ChanceSystem = "";
         internal byte LeftSkill = 2;
-
+        public override string ToString()
+        {
+            string Text = $"{Name}:\nS1: {S1T}\nS2: {S2T}\nS3: {S3T}\nSpecial: {SpecialT}\n";
+            if (TalentT != null && TalentT != "") Text += $"{TalentT}\n";
+            Text += $"HP: {Hitpoints[0]} / {MaxHitpoints[0]}\n" +
+                $"Magical Attack: {MagicalAttack[0]}\n" +
+                $"Magical Defense: {MagicalDefense[0]}\n" +
+                $"Physical Attack: {PhysicalAttack[0]}\n" +
+                $"Physical Defense: {PhysicalDefense[0]}\n" +
+                $"Magical knowledge: {MagicalKnowledge[0]}\n" +
+                $"Mana sensitivy: {ManaSensitivity[0]}\n" +
+                $"Punctual: {Punctual[0]}\n" +
+                $"Immunsystem: {Immun[0]}\n";
+            return Text;
+        }
         internal virtual void SkillThree()
         {
 
