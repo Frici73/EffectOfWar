@@ -102,13 +102,13 @@ namespace EffectOfWar
         public override void StartOfTurn()
         {
             base.StartOfTurn();
-            if (selected != null) MagicalAttack[0] -= Convert.ToByte(selected.MagicalAttack[1] * 0.25f);
+            if (selected != null) MagicalAttack[0] -= Converter.ConvertingToByte(selected.MagicalAttack[1] * 0.25f);
             Random r = new Random();
             Character[] enemys = GetCharacters(false, -1, true);
             selected = enemys[r.Next(enemys.Length)];
             EffectGroup effect = new EffectGroup("Reaper magical steal", Effect.matk, 0.25f, 1, true, false, this);
             effect.Give(selected, true);
-            MagicalAttack[0] += Convert.ToByte(selected.MagicalAttack[1] * 0.25f);
+            MagicalAttack[0] += Converter.ConvertingToByte(selected.MagicalAttack[1] * 0.25f);
         }
 
         internal override void SkillOne()

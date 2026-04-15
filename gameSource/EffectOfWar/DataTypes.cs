@@ -87,27 +87,27 @@ namespace EffectOfWar
                 if (effects[i] == Effect.maxhp)
                 {
                     if (!positive) values[i] *= -1;
-                    c.MaxHitpoints[0] += Convert.ToInt16(c.MaxHitpoints[1] * values[i]);
+                    c.MaxHitpoints[0] += Converter.ConvertingToShort(c.MaxHitpoints[1] * values[i]);
                 }
                 else if (effects[i] == Effect.matk)
                 {
                     if (!positive) values[i] *= -1;
-                    c.MagicalAttack[0] += Convert.ToByte(c.MagicalAttack[1] * values[i]);
+                    c.MagicalAttack[0] += Converter.ConvertingToByte(c.MagicalAttack[1] * values[i]);
                 }
                 else if (effects[i] == Effect.mdef)
                 {
                     if (!positive) values[i] *= -1;
-                    c.MagicalDefense[0] += Convert.ToByte(c.MagicalDefense[1] * values[i]);
+                    c.MagicalDefense[0] += Converter.ConvertingToByte(c.MagicalDefense[1] * values[i]);
                 }
                 else if (effects[i] == Effect.patk)
                 {
                     if (!positive) values[i] *= -1;
-                    c.PhysicalAttack[0] += Convert.ToByte(c.PhysicalAttack[1] * values[i]);
+                    c.PhysicalAttack[0] += Converter.ConvertingToByte(c.PhysicalAttack[1] * values[i]);
                 }
                 else if (effects[i] == Effect.pdef)
                 {
                     if (!positive) values[i] *= -1;
-                    c.PhysicalDefense[0] += Convert.ToByte(c.PhysicalDefense[1] * values[i]);
+                    c.PhysicalDefense[0] += Converter.ConvertingToByte(c.PhysicalDefense[1] * values[i]);
                 }
                 else if (effects[i] == Effect.simmun)
                 {
@@ -167,11 +167,11 @@ namespace EffectOfWar
                 else if (effects[i] == Effect.allstat)
                 {
                     if (!positive) values[i] *= -1;
-                    c.MaxHitpoints[0] += Convert.ToInt16(c.MaxHitpoints[1] * values[i]);
-                    c.MagicalAttack[0] += Convert.ToByte(c.MagicalAttack[1] * values[i]);
-                    c.MagicalDefense[0] += Convert.ToByte(c.MagicalDefense[1] * values[i]);
-                    c.PhysicalAttack[0] += Convert.ToByte(c.PhysicalAttack[1] * values[i]);
-                    c.PhysicalDefense[0] += Convert.ToByte(c.PhysicalDefense[1] * values[i]);
+                    c.MaxHitpoints[0] += Converter.ConvertingToShort(c.MaxHitpoints[1] * values[i]);
+                    c.MagicalAttack[0] += Converter.ConvertingToByte(c.MagicalAttack[1] * values[i]);
+                    c.MagicalDefense[0] += Converter.ConvertingToByte(c.MagicalDefense[1] * values[i]);
+                    c.PhysicalAttack[0] += Converter.ConvertingToByte(c.PhysicalAttack[1] * values[i]);
+                    c.PhysicalDefense[0] += Converter.ConvertingToByte(c.PhysicalDefense[1] * values[i]);
                     c.Immun[0] += values[i];
                     c.Punctual[0] += values[i];
                     c.MagicalKnowledge[0] += values[i];
@@ -194,27 +194,27 @@ namespace EffectOfWar
                 if (effects[i] == Effect.maxhp)
                 {
                     if (positive) values[i] *= -1;
-                    c.MaxHitpoints[0] += Convert.ToInt16(c.MaxHitpoints[1] * values[i]);
+                    c.MaxHitpoints[0] += Converter.ConvertingToShort(c.MaxHitpoints[1] * values[i]);
                 }
                 else if (effects[i] == Effect.matk)
                 {
                     if (positive) values[i] *= -1;
-                    c.MagicalAttack[0] += Convert.ToByte(c.MagicalAttack[1] * values[i]);
+                    c.MagicalAttack[0] += Converter.ConvertingToByte(c.MagicalAttack[1] * values[i]);
                 }
                 else if (effects[i] == Effect.mdef)
                 {
                     if (positive) values[i] *= -1;
-                    c.MagicalDefense[0] += Convert.ToByte(c.MagicalDefense[1] * values[i]);
+                    c.MagicalDefense[0] += Converter.ConvertingToByte(c.MagicalDefense[1] * values[i]);
                 }
                 else if (effects[i] == Effect.patk)
                 {
                     if (positive) values[i] *= -1;
-                    c.PhysicalAttack[0] += Convert.ToByte(c.PhysicalAttack[1] * values[i]);
+                    c.PhysicalAttack[0] += Converter.ConvertingToByte(c.PhysicalAttack[1] * values[i]);
                 }
                 else if (effects[i] == Effect.pdef)
                 {
                     if (positive) values[i] *= -1;
-                    c.PhysicalDefense[0] += Convert.ToByte(c.PhysicalDefense[1] * values[i]);
+                    c.PhysicalDefense[0] += Converter.ConvertingToByte(c.PhysicalDefense[1] * values[i]);
                 }
                 else if (effects[i] == Effect.simmun)
                 {
@@ -274,11 +274,11 @@ namespace EffectOfWar
                 else if (effects[i] == Effect.allstat)
                 {
                     if (positive) values[i] *= -1;
-                    c.MaxHitpoints[0] += Convert.ToInt16(c.MaxHitpoints[1] * values[i]);
-                    c.MagicalAttack[0] += Convert.ToByte(c.MagicalAttack[1] * values[i]);
-                    c.MagicalDefense[0] += Convert.ToByte(c.MagicalDefense[1] * values[i]);
-                    c.PhysicalAttack[0] += Convert.ToByte(c.PhysicalAttack[1] * values[i]);
-                    c.PhysicalDefense[0] += Convert.ToByte(c.PhysicalDefense[1] * values[i]);
+                    c.MaxHitpoints[0] += Converter.ConvertingToShort(c.MaxHitpoints[1] * values[i]);
+                    c.MagicalAttack[0] += Converter.ConvertingToByte(c.MagicalAttack[1] * values[i]);
+                    c.MagicalDefense[0] += Converter.ConvertingToByte(c.MagicalDefense[1] * values[i]);
+                    c.PhysicalAttack[0] += Converter.ConvertingToByte(c.PhysicalAttack[1] * values[i]);
+                    c.PhysicalDefense[0] += Converter.ConvertingToByte(c.PhysicalDefense[1] * values[i]);
                     c.Immun[0] += values[i];
                     c.Punctual[0] += values[i];
                     c.MagicalKnowledge[0] += values[i];
@@ -356,9 +356,9 @@ namespace EffectOfWar
             ushort val = 0;
             if (positive)
             {
-                if (type == OverTimeType.ManaCharge) val = Convert.ToUInt16(this.val * c.ManaSensitivity[0]);
-                else if (type == OverTimeType.OverRegenerate) val = Convert.ToUInt16(this.val * c.Immun[0]);
-                else if (type == OverTimeType.Recover) val = Convert.ToUInt16(this.val);
+                if (type == OverTimeType.ManaCharge) val = Converter.ConvertingToUshort(this.val * c.ManaSensitivity[0]);
+                else if (type == OverTimeType.OverRegenerate) val = Converter.ConvertingToUshort(this.val * c.Immun[0]);
+                else if (type == OverTimeType.Recover) val = Converter.ConvertingToUshort(this.val);
 
                 giver.TotalHealing += val;
                 Healing healing = new Healing(HealingType.none, val, giver);
@@ -366,16 +366,16 @@ namespace EffectOfWar
             }
             else
             {
-                if (type == OverTimeType.Bleeding) val = Convert.ToUInt16(this.val);
-                else if (type == OverTimeType.Explosion) val = Convert.ToUInt16(this.val * (c.MagicalDefense[0] + c.PhysicalDefense[0]));
+                if (type == OverTimeType.Bleeding) val = Converter.ConvertingToUshort(this.val);
+                else if (type == OverTimeType.Explosion) val = Converter.ConvertingToUshort(this.val * (c.MagicalDefense[0] + c.PhysicalDefense[0]));
                 else if (type == OverTimeType.Fall)
                 {
                     float multiple = 1.1f;
                     for (int i = 0; i < startingLifetime - turn; i++) multiple *= 1.1f;
-                    val = Convert.ToUInt16(c.MaxHitpoints[0] * this.val * multiple);
+                    val = Converter.ConvertingToUshort(c.MaxHitpoints[0] * this.val * multiple);
                 }
-                else if (type == OverTimeType.Poison) val = Convert.ToUInt16(this.val * (c.MagicalAttack[0] + c.PhysicalAttack[0]));
-                else if (type == OverTimeType.Lifesteal) val = Convert.ToUInt16(this.val * c.MaxHitpoints[0]);
+                else if (type == OverTimeType.Poison) val = Converter.ConvertingToUshort(this.val * (c.MagicalAttack[0] + c.PhysicalAttack[0]));
+                else if (type == OverTimeType.Lifesteal) val = Converter.ConvertingToUshort(this.val * c.MaxHitpoints[0]);
 
                 giver.TotalDamageDealt += val;
                 DMG dmg = new DMG(val);
@@ -558,7 +558,7 @@ namespace EffectOfWar
             if (turn > 0) turn -= 1;
             if (turn == 0)
             {
-                ushort value = Convert.ToUInt16(statScale?.Invoke(c)*PercentDamage ?? 0);
+                ushort value = Converter.ConvertingToUshort(statScale?.Invoke(c)*PercentDamage ?? 0);
                 if (fixeddamage != null) value += fixeddamage;
                 giver.TotalDamageDealt += value;
                 if (sideeffect != null)
@@ -610,15 +610,15 @@ namespace EffectOfWar
         public Healing(HealingType type, float value, Character healer)
         {
             this.type = type;
-            if (type==HealingType.magic) magical = Convert.ToUInt16(value);
-            else if (type==HealingType.physi) physical = Convert.ToUInt16(value);
+            if (type==HealingType.magic) magical = Converter.ConvertingToUshort(value*healer.HealDealt);
+            else if (type==HealingType.physi) physical = Converter.ConvertingToUshort(value*healer.HealDealt);
             this.healer = healer;
         }
-        public Healing(ushort physical, ushort magical, Character healer)
+        public Healing(float physical, float magical, Character healer)
         {
             type = HealingType.both;
-            this.physical = physical;
-            this.magical = magical;
+            this.magical = Converter.ConvertingToUshort(magical * healer.HealDealt);
+            this.physical = Converter.ConvertingToUshort(physical * healer.HealDealt);
             this.healer = healer;
         }
     }
@@ -704,10 +704,10 @@ namespace EffectOfWar
 
         public void Activate()
         {
-            if (TalentStack[0] > Convert.ToByte(0))
+            if (TalentStack[0] > Converter.ConvertingToByte(0))
             {
                 character.link.tb.Text += $"{character.Name} Talent aktiválása:";
-                TalentStack[0] -= Convert.ToByte(1);
+                TalentStack[0] -= Converter.ConvertingToByte(1);
                 character.Talent();
                 if (TalentCooldown[0] == 0) TalentCooldown[0] = TalentCooldown[1];
             }
@@ -721,7 +721,7 @@ namespace EffectOfWar
 
         public void Charge()
         {
-            TalentStack[0] = Convert.ToByte(Math.Min(TalentStack[1], TalentStack[0]+1));
+            TalentStack[0] = Converter.ConvertingToByte(Math.Min(TalentStack[1], TalentStack[0]+1));
             TalentCooldown[0] = 0;
         }
 
@@ -760,7 +760,7 @@ namespace EffectOfWar
 
         public void Load(int val)
         {
-            State[0] = (ushort)Math.Min(State[0] + Convert.ToUInt16(val), State[1]);
+            State[0] = (ushort)Math.Min(State[0] + Converter.ConvertingToUshort(val), State[1]);
             if (character.OnChargeLoaded() == true) State[0] = 0;
         }
     }

@@ -23,7 +23,7 @@ namespace EffectOfWar
 
         internal override void SkillOne()
         {
-            GetCharacters(false, 1).ToList().ForEach(e => e.Shielding(Convert.ToUInt16(PhysicalAttack[0] * 0.75), this));
+            GetCharacters(false, 1).ToList().ForEach(e => e.Shielding(Converter.ConvertingToUshort(PhysicalAttack[0] * 0.75f), this));
         }
 
         internal override void SkillTwo()
@@ -52,7 +52,7 @@ namespace EffectOfWar
 
         internal override void AfterSkillUse(Skill skill)
         {
-            Shielding(Convert.ToUInt16(PhysicalAttack[0] * 0.5f), this);
+            Shielding(Converter.ConvertingToUshort(PhysicalAttack[0] * 0.5f), this);
         }
 
         internal override void SkillOne()
@@ -124,7 +124,7 @@ namespace EffectOfWar
         {
             foreach (var c in GetCharacters(true, 4, true))
             {
-                c.Shielding(Convert.ToUInt16(MagicalAttack[0] * 0.75f), this);
+                c.Shielding(Converter.ConvertingToUshort(MagicalAttack[0] * 0.75f), this);
             }
         }
         internal override void OnSelfDeath(Character killer)
@@ -142,7 +142,7 @@ namespace EffectOfWar
         {
             foreach (var c in GetCharacters(true, 4, true))
             {
-                c.Shielding(Convert.ToUInt16(MagicalAttack[0] * 3), this);
+                c.Shielding(Converter.ConvertingToUshort(MagicalAttack[0] * 3), this);
             }
             DMG dmg = new DMG(DMGType.magical, MagicalAttack[0] * 2, 0, 1, AttackType.Reflect);
             foreach (var c in GetCharacters(false, 4, true))
@@ -169,12 +169,12 @@ namespace EffectOfWar
         {
             EffectGroup taunt = new EffectGroup("Taunt", Effect.taunt, 0, 2, true, true, this);
             taunt.Give(this);
-            Shielding(Convert.ToUInt16(MaxHitpoints[0] * 0.07f), this);
+            Shielding(Converter.ConvertingToUshort(MaxHitpoints[0] * 0.07f), this);
         }
         internal override void SkillTwo()
         {
             DMG dmg = new DMG(PhysicalAttack[0], 0, Punctual[0], 0, DMGDealt, AttackType.Skill);
-            Shielding(Convert.ToUInt16(GetCharacters(false, 1)[0].Defense(this, dmg)[0] * 0.6f), this);
+            Shielding(Converter.ConvertingToUshort(GetCharacters(false, 1)[0].Defense(this, dmg)[0] * 0.6f), this);
         }
         public override void EndOfTurn()
         {
@@ -212,12 +212,12 @@ namespace EffectOfWar
             {
                 foreach (var c in GetCharacters(true, 4, true))
                 {
-                    c.Shielding(Convert.ToUInt16(MagicalAttack[0] * 1.5f), this);
+                    c.Shielding(Converter.ConvertingToUshort(MagicalAttack[0] * 1.5f), this);
                 }
             }
             else
             {
-                Shielding(Convert.ToUInt16(MagicalAttack[0] * 2), this);
+                Shielding(Converter.ConvertingToUshort(MagicalAttack[0] * 2), this);
             }
         }
 
@@ -227,8 +227,8 @@ namespace EffectOfWar
             {
                 foreach (var c in GetCharacters(true, 4, true))
                 {
-                    Healing heal = new Healing(HealingType.physi, Convert.ToInt16(PhysicalAttack[0] * 1.25f), this);
-                    ushort overheal = Convert.ToUInt16(c.Healing(heal)[2]);
+                    Healing heal = new Healing(HealingType.physi, Converter.ConvertingToShort(PhysicalAttack[0] * 1.25f), this);
+                    ushort overheal = Converter.ConvertingToUshort(c.Healing(heal)[2]);
                     if (overheal > 0)
                     {
                         c.Shielding(overheal, this);
@@ -268,13 +268,13 @@ namespace EffectOfWar
         {
             foreach (var c in GetCharacters(false, 4, true))
             {
-                ushort stolen = Convert.ToUInt16((c.shield[0] + c.shield[1]) * 0.3f);
+                ushort stolen = Converter.ConvertingToUshort((c.shield[0] + c.shield[1]) * 0.3f);
                 Shielding(stolen, this);
-                shield[1] -= Convert.ToUInt16(stolen - shield[0]);
+                shield[1] -= Converter.ConvertingToUshort(stolen - shield[0]);
                 shield[0] -= stolen;
             }
-            shield[1] = Convert.ToUInt16(shield[0] * 0.7f);
-            shield[0] = Convert.ToUInt16(shield[0] * 0.3f);
+            shield[1] = Converter.ConvertingToUshort(shield[0] * 0.7f);
+            shield[0] = Converter.ConvertingToUshort(shield[0] * 0.3f);
         }
         internal override void SkillTwo()
         {
@@ -283,8 +283,8 @@ namespace EffectOfWar
         }
         internal override void AfterSkillUse(Skill used)
         {
-            short lost = Convert.ToInt16(MaxHitpoints[0] - Hitpoints[0]);
-            Healing heal = new Healing(HealingType.none, Convert.ToInt16(lost * 0.015f), this);
+            short lost = Converter.ConvertingToShort(MaxHitpoints[0] - Hitpoints[0]);
+            Healing heal = new Healing(HealingType.none, Converter.ConvertingToShort(lost * 0.015f), this);
             Healing(heal);
         }
     }
@@ -329,8 +329,8 @@ namespace EffectOfWar
 
         internal override void SkillTwo()
         {
-            short lost = Convert.ToInt16(MaxHitpoints[0] - Hitpoints[0]);
-            Healing heal = new Healing(HealingType.none, Convert.ToInt16(lost * 0.25f), this);
+            short lost = Converter.ConvertingToShort(MaxHitpoints[0] - Hitpoints[0]);
+            Healing heal = new Healing(HealingType.none, Converter.ConvertingToShort(lost * 0.25f), this);
             Healing(heal);
             EffectGroup taunt = new EffectGroup("Taunt", Effect.taunt, 0, 2, true, true, this);
             taunt.Give(this);
@@ -361,7 +361,7 @@ namespace EffectOfWar
         {
             foreach (var c in GetCharacters(true, 4, true))
             {
-                c.Shielding(Convert.ToUInt16(MagicalAttack[0] * 0.75f), this);
+                c.Shielding(Converter.ConvertingToUshort(MagicalAttack[0] * 0.75f), this);
             }
         }
 
@@ -402,7 +402,7 @@ namespace EffectOfWar
         {
             Healing heal = new Healing(HealingType.magic, MagicalAttack[0], this);
             Healing(heal);
-            Shielding(Convert.ToUInt16(MagicalAttack[0]), this);
+            Shielding(Converter.ConvertingToUshort(MagicalAttack[0]), this);
         }
 
         public override void EndOfTurn()
@@ -450,7 +450,7 @@ namespace EffectOfWar
         {
             EffectGroup taunt = new EffectGroup("Taunt", Effect.taunt, 0, 2, true, true, this);
             taunt.Give(this);
-            Healing heal = new Healing(HealingType.magic, Convert.ToInt16(MagicalAttack[0] * 0.5f), this);
+            Healing heal = new Healing(HealingType.magic, Converter.ConvertingToShort(MagicalAttack[0] * 0.5f), this);
             Healing(heal);
         }
         internal override void AfterSelfGetDMG(Character attacker, DMG dmg, short taked)
@@ -516,11 +516,11 @@ namespace EffectOfWar
             DMG dmg = new DMG(DMGType.none, 0, 1, 1, AttackType.Skill);
             foreach (var c in GetCharacters(false, 4, true))
             {
-                dmg.physical = Convert.ToInt16(c.Hitpoints[0] * 0.5f);
+                dmg.physical = Converter.ConvertingToShort(c.Hitpoints[0] * 0.5f);
                 ushort damageDealt = c.Defense(this, dmg)[0];
                 foreach (var a in GetCharacters(true, 4, true))
                 {
-                    a.Shielding(Convert.ToUInt16(damageDealt * 0.2f), this);
+                    a.Shielding(Converter.ConvertingToUshort(damageDealt * 0.2f), this);
                 }
             }
         }

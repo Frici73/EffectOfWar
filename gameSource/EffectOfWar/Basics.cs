@@ -54,8 +54,9 @@ namespace EffectOfWar
         internal Processing link;
         internal byte teamID = 0;
         internal byte Slot = 0;  // 0, 1, 2, 3
-        internal float DMGDealt = 0;
-        internal float DMGTaken = 0;
+        internal float DMGDealt = 2;
+        internal float DMGTaken = 1;
+        internal float HealDealt = 1;
         internal float regeneration = 0.01f;
         internal List<short> LostedHitpointsInRounds = new List<short>();
         internal short LastLostedHP = 0;
@@ -224,43 +225,43 @@ namespace EffectOfWar
             ushort val = 0;
             if (dmg.atktype != AttackType.Reflect)
             {
-                val += Convert.ToUInt16(dmg.physical * dmg.punctual - PhysicalAttack[0] * Punctual[0]);
-                val += Convert.ToUInt16(dmg.magical * dmg.magicalknowledge - MagicalDefense[0] * MagicalKnowledge[0]);
-                val = Convert.ToUInt16(val * (dmg.dmgD - DMGTaken));
+                val += Converter.ConvertingToUshort(dmg.physical * dmg.punctual - PhysicalAttack[0] * Punctual[0]);
+                val += Converter.ConvertingToUshort(dmg.magical * dmg.magicalknowledge - MagicalDefense[0] * MagicalKnowledge[0]);
+                val = Converter.ConvertingToUshort(val * (dmg.dmgD - DMGTaken));
             }
-            else val = Convert.ToUInt16(dmg.physical);
+            else val = Converter.ConvertingToUshort(dmg.physical);
 
-            TotalDamageTaken += Convert.ToUInt16(val);
-            attacker.TotalDamageDealt += Convert.ToUInt16(val);
-            ushort toshield = Convert.ToUInt16(shield[0]-val);
+            TotalDamageTaken += Converter.ConvertingToUshort(val);
+            attacker.TotalDamageDealt += Converter.ConvertingToUshort(val);
+            ushort toshield = Converter.ConvertingToUshort(shield[0]-val);
             if (toshield < 0)
             {
                 shield[0] = 0;
-                shield[1] -= Convert.ToUInt16(toshield * -1);
+                shield[1] -= Converter.ConvertingToUshort(toshield * -1);
             }
             else
             {
-                toshield *= Convert.ToUInt16(-1);
-                shield[0] -= Convert.ToUInt16(toshield);
+                toshield *= Converter.ConvertingToUshort(-1);
+                shield[0] -= Converter.ConvertingToUshort(toshield);
             }
             val -= toshield;
             link.InsertText($"{Name} sérült {attacker.Name} miatt pajzsba {toshield.ToString()}");
             link.InsertText($"{Name} sérült {attacker.Name} miatt életbe {val.ToString()}");
             if (val > 0)
             {
-                Hitpoints[0] -= Convert.ToInt16(val);
-                LastLostedHP = Convert.ToInt16(val);
-                LostedHitpointsInRounds[LostedHitpointsInRounds.Count-1] += Convert.ToInt16(val);
+                Hitpoints[0] -= Converter.ConvertingToShort(val);
+                LastLostedHP = Converter.ConvertingToShort(val);
+                LostedHitpointsInRounds[LostedHitpointsInRounds.Count-1] += Converter.ConvertingToShort(val);
             }
 
-            AfterSelfGetDMG(attacker, dmg, Convert.ToInt16(val));
+            AfterSelfGetDMG(attacker, dmg, Converter.ConvertingToShort(val));
             foreach (Character teammate in link.Characters(teamID, true))
             {
-                if (teammate != this) teammate.AfterTeammateGetDMG(attacker, this, dmg, Convert.ToInt16(val));
+                if (teammate != this) teammate.AfterTeammateGetDMG(attacker, this, dmg, Converter.ConvertingToShort(val));
             }
             foreach (Character enemy in link.Characters(teamID, false))
             {
-                enemy.AfterEnemyGetDMG(attacker, this, dmg, Convert.ToInt16(val));
+                enemy.AfterEnemyGetDMG(attacker, this, dmg, Converter.ConvertingToShort(val));
             }
 
             if (dmg.atktype == AttackType.Skill)
@@ -277,8 +278,8 @@ namespace EffectOfWar
             EffectGroup? hpdrop = effects.FirstOrDefault(e => e.Have(Effect.hpDrop));
             if (hpdrop != null)
             {
-                short minhp = Convert.ToInt16(hpdrop.GetValue(Effect.hpDrop)*MaxHitpoints[0]);
-                if (Hitpoints[0] < minhp) Hitpoints[0] = Convert.ToInt16(minhp);
+                short minhp = Converter.ConvertingToShort(hpdrop.GetValue(Effect.hpDrop)*MaxHitpoints[0]);
+                if (Hitpoints[0] < minhp) Hitpoints[0] = Converter.ConvertingToShort(minhp);
             }
 
             if (Hitpoints[0] <= 0)
@@ -286,7 +287,7 @@ namespace EffectOfWar
                 ProbablyDead(attacker);
             }
 
-            return new ushort[] { val, toshield, Convert.ToUInt16(val + toshield) }; // hp, pajzs, összes
+            return new ushort[] { val, toshield, Converter.ConvertingToUshort(val + toshield) }; // hp, pajzs, összes
         }
 
         // Before get effect
@@ -356,11 +357,11 @@ namespace EffectOfWar
         {
             if (!effects.Any(e => e.Have(Effect.Untouchable)))
             {
-                Healing reg = new Healing(HealingType.reg, Convert.ToInt16(MaxHitpoints[0] * regeneration * Immun[0]), this);
+                Healing reg = new Healing(HealingType.reg, Converter.ConvertingToShort(MaxHitpoints[0] * regeneration * Immun[0]), this);
                 Markers.ForEach(e => e.EndOfTurn(this));
 
                 EffectGroup? absoluteOne = effects.FirstOrDefault(e => e.Have(Effect.absoluteOne));
-                if (absoluteOne != null && absoluteOne.turn == 1) Hitpoints[0] *= Convert.ToInt16(-1);
+                if (absoluteOne != null && absoluteOne.turn == 1) Hitpoints[0] *= Converter.ConvertingToShort(-1);
                 effects.ForEach(e => e.EndOfTurn(this));
 
                 HoTs.ForEach(e => e.EndOfTurn(this));
@@ -398,17 +399,17 @@ namespace EffectOfWar
             ushort unused = 0;
             if (heal.type == HealingType.reg)
             {
-                Hitpoints[0] += Convert.ToInt16(heal.physical);
+                Hitpoints[0] += Converter.ConvertingToShort(heal.physical);
                 TotalRegeneration += heal.physical;
             }
-            else if (heal.type == HealingType.physi) val = Convert.ToUInt16(heal.physical * Immun[0]);
-            else if (heal.type == HealingType.magic) val = Convert.ToUInt16(heal.magical * ManaSensitivity[0]);
-            else if (heal.type == HealingType.both) val = Convert.ToUInt16(heal.physical * Immun[0] + heal.magical * ManaSensitivity[0]);
-            else if (heal.type == HealingType.none) val = Convert.ToUInt16(heal.physical);
-            Hitpoints[0] += Convert.ToInt16(val);
+            else if (heal.type == HealingType.physi) val = Converter.ConvertingToUshort(heal.physical * Immun[0]);
+            else if (heal.type == HealingType.magic) val = Converter.ConvertingToUshort(heal.magical * ManaSensitivity[0]);
+            else if (heal.type == HealingType.both) val = Converter.ConvertingToUshort(heal.physical * Immun[0] + heal.magical * ManaSensitivity[0]);
+            else if (heal.type == HealingType.none) val = Converter.ConvertingToUshort(heal.physical);
+            Hitpoints[0] += Converter.ConvertingToShort(val);
             if (Hitpoints[0] > MaxHitpoints[0])
             {
-                unused = Convert.ToUInt16(Hitpoints[0] - MaxHitpoints[0]);
+                unused = Converter.ConvertingToUshort(Hitpoints[0] - MaxHitpoints[0]);
                 Hitpoints[0] = MaxHitpoints[0];
             }
 
@@ -421,9 +422,9 @@ namespace EffectOfWar
             {
                 enemy.AfterEnemyHealed(heal, this);
             }
-            heal.healer.TotalHealing += Convert.ToUInt16(val - unused);
+            heal.healer.TotalHealing += Converter.ConvertingToUshort(val - unused);
 
-            return new ushort[3] { val, Convert.ToUInt16(val - unused), unused }; // összes, használt, nem használt
+            return new ushort[3] { val, Converter.ConvertingToUshort(val - unused), unused }; // összes, használt, nem használt
         }
 
         // before shield
@@ -503,7 +504,7 @@ namespace EffectOfWar
                 EffectGroup? hpdrop = effects.FirstOrDefault(e => e.Have(Effect.reincarnation));
                 if (hpdrop != null)
                 {
-                    short hp = Convert.ToInt16(hpdrop.GetValue(Effect.reincarnation) * MaxHitpoints[0]);
+                    short hp = Converter.ConvertingToShort(hpdrop.GetValue(Effect.reincarnation) * MaxHitpoints[0]);
                     Hitpoints[0] = hp;
                 }
 

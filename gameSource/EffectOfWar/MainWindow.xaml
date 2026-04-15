@@ -5,10 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EffectOfWar"
         mc:Ignorable="d"
-        Title="Effect of War" Height="450" Width="800" ResizeMode="CanMinimize" WindowState="Maximized">
+        Title="Effect of War" ResizeMode="CanMinimize" WindowState="Maximized">
     <Grid>
-        <Grid x:Name="Menu"
-      MinWidth="1000">
+        <Grid x:Name="Menu">
 
             <!-- ===== GRID STRUKTÚRA ===== -->
             <Grid.RowDefinitions>
@@ -21,7 +20,7 @@
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
 
@@ -30,7 +29,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="1.3*"/>
+                <ColumnDefinition Width="1.2*"/>
             </Grid.ColumnDefinitions>
 
             <!-- ===================== -->
@@ -70,16 +69,16 @@
 
                             <!-- NÉV -->
                             <TextBlock Text="{Binding Name}"
-                       HorizontalAlignment="Center"
-                       FontWeight="Bold"
-                       Foreground="White"
-                       Margin="0,0,0,5"/>
+                                HorizontalAlignment="Center"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                Margin="0,0,0,5"/>
 
                             <!-- KÉP -->
                             <Image Source="{Binding ImagePath}"
-                   Width="100"
-                   Height="100"
-                   Stretch="UniformToFill"/>
+                            Width="100"
+                            Height="100"
+                            Stretch="UniformToFill"/>
 
                         </StackPanel>
                     </DataTemplate>
@@ -170,8 +169,8 @@
 
             <!-- BOSSES -->
             <ListBox x:Name="BossesList" Grid.Row="1" Grid.Column="3"
- ScrollViewer.VerticalScrollBarVisibility="Auto"
- ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Purple">
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Purple">
 
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -215,7 +214,7 @@
             <TextBox x:Name="BasicStatShower" Grid.Row="1"
              Grid.Column="4"
              TextWrapping="Wrap"
-             VerticalScrollBarVisibility="Auto" Background="Gray"/>
+             VerticalScrollBarVisibility="Auto" Background="Gray" Padding="2,2,15,2"/>
 
             <Label Grid.Row="2"
            Grid.Column="0"
@@ -241,8 +240,34 @@
             <Button Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="6" Click="StartGame" Content="Start Game"/>
         </Grid>
 
-        <Grid x:Name="Battleground" Grid.ColumnSpan="2" Visibility="Collapsed">
-            <TextBox x:Name="ConsoleD" Visibility="Collapsed" Panel.ZIndex="1"/>
+        <Grid x:Name="Battleground" Visibility="Collapsed">
+            <Grid.ColumnDefinitions> <!--9 oszlop 2 nyíl, 2 talent, 2 skill, 2 kép és középső rész-->
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.75*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="ConsoleD" Visibility="Collapsed" Panel.ZIndex="4" Grid.Row="0" Grid.Column="0" Grid.RowSpan="8" Grid.ColumnSpan="9"/>
+            <Grid x:Name="team1UI" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <!--1 kép, 1 nyíl, 1 képesség, 1 talent-->
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <TextBox Grid.Column="1"/>
+
+            <Grid x:Name="team2UI" Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <!--1 talent, 1 képesség, 1 nyíl, 1 kép-->
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
         </Grid>
 
     </Grid>
