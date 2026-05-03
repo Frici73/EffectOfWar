@@ -14,103 +14,76 @@ using System.Windows.Media.Effects;
 
 namespace EffectOfWar
 {
-    public static class AllCharacter
-    {
-        internal static List<Character> supports = new List<Character> () { new Joker() };
-        internal static List<Character> rangers = new List<Character>() { new Lightning(), new Breaker(), new Reaper() };
-        internal static List<Character> warriors = new List<Character>() { new Barrier(), new Guardian(), new Bulldozer(), new Fulmare(), new ArthurKing(), new Trash(), new Afterglow(), new Cooldown(), new Frame(), new GodOfDeath(), new Smoke(), new Fortune_teller() };
-        internal static List<Boss> bosses = new List<Boss>() { new Chaos(), new Fate(), new Werewolf(), new Goblins(), new Vampire(), new Moon(), new Solmir(), new Tarantula() };
-    }
-    public enum HType
-    {
-        ranger, warrior, support, boss
-    }
-    enum ShiftMode
-    {
-        circle, line
-    }
-    enum Skill
-    {
-        first, second, third, talent
-    }
-    enum Subclass
-    {
-        Automated, Burst, Medic, Buffer, Debuffer, Shielder, Tank, ShapeShifter, Charger, Sustain, Avanger, Resist, Unknown, Stealer, TankKiller
-    }
-
-    internal abstract class Character
+    public abstract class Character
     {
         // leírások
-        internal string Name = "";
-        internal string S1T = "";
-        internal string S2T = "";
-        internal string TalentT = "";
-        internal string SpecialT = "";
-        internal HType type;
-        internal Subclass[] subclass;
-        internal string img = "";
+        public string Name = "";
+        public string S1T = "";
+        public string S2T = "";
+        public string TalentT = "";
+        public string SpecialT = "";
 
         // általános adatok
-        internal Processing link;
-        internal byte teamID = 0;
-        internal byte Slot = 0;  // 0, 1, 2, 3
-        internal float DMGDealt = 2;
-        internal float DMGTaken = 1;
-        internal float HealDealt = 1;
-        internal float regeneration = 0.01f;
-        internal List<short> LostedHitpointsInRounds = new List<short>();
-        internal short LastLostedHP = 0;
+        public Processing link;
+        public byte teamID = 0;
+        public byte Slot = 0;  // 0, 1, 2, 3
+        public float DMGDealt = 2;
+        public float DMGTaken = 1;
+        public float HealDealt = 1;
+        public float regeneration = 0.01f;
+        public List<short> LostedHitpointsInRounds = new List<short>() { 0 };
+        public short LastLostedHP = 0;
 
         // HP stats
-        internal ushort[] shield = new ushort[] { 0, 0 }; // from previous round, from current round
-        internal short[] MaxHitpoints = new short[] { 0, 0 }; // real, init
-        internal short[] Hitpoints = new short[] { 0, 0 }; // real, init
+        public ushort[] shield = new ushort[] { 0, 0 }; // from previous round, from current round
+        public short[] MaxHitpoints = new short[] { 0, 0 }; // real, init
+        public short[] Hitpoints = new short[] { 0, 0 }; // real, init
 
         // magic
-        internal byte[] MagicalAttack = new byte[] { 0, 0 }; // real, init
-        internal byte[] MagicalDefense = new byte[] { 0, 0 }; // real, init
-        internal float[] ManaSensitivity = new float[] { 0, 0 }; // real, init
-        internal float[] MagicalKnowledge = new float[] { 0, 0 }; // real, init
+        public byte[] MagicalAttack = new byte[] { 0, 0 }; // real, init
+        public byte[] MagicalDefense = new byte[] { 0, 0 }; // real, init
+        public float[] ManaSensitivity = new float[] { 0, 0 }; // real, init
+        public float[] MagicalKnowledge = new float[] { 0, 0 }; // real, init
 
         // physic
-        internal byte[] PhysicalAttack = new byte[] { 0, 0 }; // real, init
-        internal byte[] PhysicalDefense = new byte[] { 0, 0 }; // real, init
-        internal float[] Punctual = new float[] { 0, 0 }; // real, init
-        internal float[] Immun = new float[] { 0, 0 }; // real, init
+        public byte[] PhysicalAttack = new byte[] { 0, 0 }; // real, init
+        public byte[] PhysicalDefense = new byte[] { 0, 0 }; // real, init
+        public float[] Punctual = new float[] { 0, 0 }; // real, init
+        public float[] Immun = new float[] { 0, 0 }; // real, init
 
         // immunity
-        internal float[] BuffImmunity = new float[] { 0, 0 }; // real, init
-        internal float[] DebuffImmunity = new float[] { 0, 0 }; // real, init
-        internal float[] DoTImmunity = new float[] { 0, 0 }; // real, init
-        internal float[] HoTImmunity = new float[] { 0, 0 }; // real, init
+        public float[] BuffImmunity = new float[] { 0, 0 }; // real, init
+        public float[] DebuffImmunity = new float[] { 0, 0 }; // real, init
+        public float[] DoTImmunity = new float[] { 0, 0 }; // real, init
+        public float[] HoTImmunity = new float[] { 0, 0 }; // real, init
 
         // kiegészítő adatok
-        internal Shift shift;
-        internal Talent talent;
-        internal Charge charge;
+        public Shift shift;
+        public Talent talent;
+        public Charge charge;
 
-        internal Counter counter;
-        internal Reflect reflect;
-        internal Marker[] OwnMarker;
+        public Counter counter;
+        public Reflect reflect;
+        public Marker[] OwnMarker;
 
         // effects
-        internal List<EffectGroup> effects = new List<EffectGroup>();
-        internal List<OverTime> DoTs = new List<OverTime>();
-        internal List<OverTime> HoTs = new List<OverTime>();
-        internal List<Marker> Markers = new List<Marker>();
+        public List<EffectGroup> effects = new List<EffectGroup>();
+        public List<OverTime> DoTs = new List<OverTime>();
+        public List<OverTime> HoTs = new List<OverTime>();
+        public List<Marker> Markers = new List<Marker>();
 
         // Harci statisztika
-        internal ushort TotalBuffing = 0;
-        internal ushort TotalDebuffing = 0;
+        public ushort TotalBuffing = 0;
+        public ushort TotalDebuffing = 0;
 
-        internal ushort TotalShielding = 0;
-        internal ushort TotalHealing = 0;
+        public ushort TotalShielding = 0;
+        public ushort TotalHealing = 0;
 
-        internal ushort TotalDamageDealt = 0;
-        internal ushort TotalDamageTaken = 0;
+        public ushort TotalDamageDealt = 0;
+        public ushort TotalDamageTaken = 0;
 
-        internal ushort TotalRegeneration = 0;
-        internal byte KillCount = 0;
+        public ushort TotalRegeneration = 0;
+        public byte KillCount = 0;
 
         // functions
 
@@ -129,13 +102,13 @@ namespace EffectOfWar
                 $"Immunsystem: {Immun[0]}\n";
             return Text;
         }
-        internal virtual void TeamChange(Team team, Processing process)
+        public virtual void TeamChange(Team team, Processing process)
         {
             if (team == Team.first) teamID = 1;
             else teamID = 2;
             link = process;
         }
-        internal virtual void init(short hp, byte pa, byte pd, byte ma, byte md, float sens, float know, float immune, float punct)
+        public virtual void init(short hp, byte pa, byte pd, byte ma, byte md, float sens, float know, float immune, float punct)
         {
             MaxHitpoints[0] = hp;
             MaxHitpoints[1] = hp;
@@ -157,27 +130,62 @@ namespace EffectOfWar
             Immun[1] = immune;
             MagicalKnowledge[0] = know;
             MagicalKnowledge[1] = know;
-            img = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", type.ToString(), Name.Replace(" ", "").ToLower() + ".png");
             counter = new Counter(this);
             reflect = new Reflect(this);
         }
-        internal virtual void SpecialTechnique() { }
+        public virtual void SpecialTechnique() { }
         public virtual Character Clone()
         {
-            return (Character)this.MemberwiseClone();
+            Character clone = (Character)this.MemberwiseClone();
+
+            // 🔥 ÚJ LISTÁK (kritikus)
+            clone.effects = new List<EffectGroup>();
+            clone.DoTs = new List<OverTime>();
+            clone.HoTs = new List<OverTime>();
+            clone.Markers = new List<Marker>();
+
+            clone.LostedHitpointsInRounds = LostedHitpointsInRounds.ToList();
+
+            // ⚠️ Tömbök (ha módosítod őket runtime)
+            clone.MaxHitpoints = (short[])MaxHitpoints.Clone();
+            clone.Hitpoints = (short[])Hitpoints.Clone();
+
+            clone.MagicalAttack = (byte[])MagicalAttack.Clone();
+            clone.MagicalDefense = (byte[])MagicalDefense.Clone();
+            clone.PhysicalAttack = (byte[])PhysicalAttack.Clone();
+            clone.PhysicalDefense = (byte[])PhysicalDefense.Clone();
+
+            clone.ManaSensitivity = (float[])ManaSensitivity.Clone();
+            clone.MagicalKnowledge = (float[])MagicalKnowledge.Clone();
+
+            clone.Punctual = (float[])Punctual.Clone();
+            clone.Immun = (float[])Immun.Clone();
+
+            clone.BuffImmunity = (float[])BuffImmunity.Clone();
+            clone.DebuffImmunity = (float[])DebuffImmunity.Clone();
+            clone.DoTImmunity = (float[])DoTImmunity.Clone();
+            clone.HoTImmunity = (float[])HoTImmunity.Clone();
+
+            clone.shield = (ushort[])shield.Clone();
+
+            // ⚠️ Ezek külön objektumok → ha van bennük state, klónozni kell
+            clone.counter = new Counter(clone);
+            clone.reflect = new Reflect(clone);
+
+            return clone;
         }
 
         // skilluse
-        internal virtual void BeforeSkillUse(Skill used) { }
-        internal virtual void AfterSkillUse(Skill used) { }
+        public virtual void BeforeSkillUse(Skill used) { }
+        public virtual void AfterSkillUse(Skill used) { }
 
-        internal virtual void BeforeTeammateUseSkill(Skill used, Character user) { }
-        internal virtual void AfterTeammateUseSkill(Skill used, Character user) { }
-        internal virtual void BeforeEnemyUseSkill(Skill used, Character user) { }
-        internal virtual void AfterEnemyUseSkill(Skill used, Character user) { }
-        internal virtual void SkillOne() { }
-        internal virtual void SkillTwo() { }
-        internal virtual void UseSkill(Skill used)
+        public virtual void BeforeTeammateUseSkill(Skill used, Character user) { }
+        public virtual void AfterTeammateUseSkill(Skill used, Character user) { }
+        public virtual void BeforeEnemyUseSkill(Skill used, Character user) { }
+        public virtual void AfterEnemyUseSkill(Skill used, Character user) { }
+        public virtual void SkillOne() { }
+        public virtual void SkillTwo() { }
+        public virtual void UseSkill(Skill used)
         {
             if (effects.Any(e => e.Have(Effect.sleep))) return;
             switch (used)
@@ -190,26 +198,26 @@ namespace EffectOfWar
         }
 
         // talent
-        internal virtual void Talent() { }
+        public virtual void Talent() { }
 
         // charge
-        internal virtual bool OnChargeLoaded() { return false; }
+        public virtual bool OnChargeLoaded() { return false; }
 
         // shift
-        internal virtual void OnShifting() { }
+        public virtual void OnShifting() { }
 
         // before dmgtaken
-        internal virtual void BeforeTeammateGetDMG(Character attacker, Character teammate, DMG dmg) { }
-        internal virtual void BeforeEnemyGetDMG(Character attacker, Character enemy, DMG dmg) { }
-        internal virtual void BeforeSelfGetDMG(Character attacker, DMG dmg) { }
+        public virtual void BeforeTeammateGetDMG(Character attacker, Character teammate, DMG dmg) { }
+        public virtual void BeforeEnemyGetDMG(Character attacker, Character enemy, DMG dmg) { }
+        public virtual void BeforeSelfGetDMG(Character attacker, DMG dmg) { }
 
         // after dmgtaken
-        internal virtual void AfterSelfGetDMG(Character attacker, DMG dmg, short taked) { }
-        internal virtual void AfterTeammateGetDMG(Character attacker, Character teammate, DMG dmg, short taked) { }
-        internal virtual void AfterEnemyGetDMG(Character attacker, Character enemy, DMG dmg, short taked) { }
+        public virtual void AfterSelfGetDMG(Character attacker, DMG dmg, short taked) { }
+        public virtual void AfterTeammateGetDMG(Character attacker, Character teammate, DMG dmg, short taked) { }
+        public virtual void AfterEnemyGetDMG(Character attacker, Character enemy, DMG dmg, short taked) { }
 
         // dmgtaken hp, pajzs, összes
-        internal virtual ushort[] Defense(Character attacker, DMG dmg)
+        public virtual ushort[] Defense(Character attacker, DMG dmg)
         {
             if (effects.Any(e => e.Have(Effect.Untouchable))) return new ushort[] { 0, 0, 0 };
             BeforeSelfGetDMG(attacker, dmg);
@@ -291,14 +299,14 @@ namespace EffectOfWar
         }
 
         // Before get effect
-        internal virtual void BeforeTeammateGetEffect(EffectsBasic effect, Character teammate) { }
-        internal virtual void BeforeEnemyGetEffect(EffectsBasic effect, Character enemy) { }
-        internal virtual void BeforeSelfGetEffect(EffectsBasic effect) { }
+        public virtual void BeforeTeammateGetEffect(EffectsBasic effect, Character teammate) { }
+        public virtual void BeforeEnemyGetEffect(EffectsBasic effect, Character enemy) { }
+        public virtual void BeforeSelfGetEffect(EffectsBasic effect) { }
 
         // After get effect
-        internal virtual void AfterTeammateGetEffect(EffectsBasic effect, Character teammate, bool gived) { }
-        internal virtual void AfterEnemyGetEffect(EffectsBasic effect, Character enemy, bool gived) { }
-        internal virtual void AfterSelfGetEffect(EffectsBasic effect, bool gived) { }
+        public virtual void AfterTeammateGetEffect(EffectsBasic effect, Character teammate, bool gived) { }
+        public virtual void AfterEnemyGetEffect(EffectsBasic effect, Character enemy, bool gived) { }
+        public virtual void AfterSelfGetEffect(EffectsBasic effect, bool gived) { }
 
         // get effect
         public virtual bool GetEffect(EffectsBasic effect, bool granted)
@@ -338,7 +346,6 @@ namespace EffectOfWar
             {
                 enemy.AfterEnemyGetEffect(effect, this, gived);
             }
-
             if (gived) effect.giver.TotalBuffing += 1;
             return gived;
         }
@@ -497,7 +504,7 @@ namespace EffectOfWar
         }
 
         // death
-        internal void ProbablyDead(Character killer)
+        public void ProbablyDead(Character killer)
         {
             if (!effects.Any(e => e.Have(Effect.absoluteOne)))
             { 
@@ -526,15 +533,15 @@ namespace EffectOfWar
                 }
             }
         }
-        internal virtual void OnEnemyDeath(Character enemy, Character killer) { }
-        internal virtual void OnTeammateDeath(Character teammate, Character killer) { }
-        internal virtual void OnSelfDeath(Character killer) { }
+        public virtual void OnEnemyDeath(Character enemy, Character killer) { }
+        public virtual void OnTeammateDeath(Character teammate, Character killer) { }
+        public virtual void OnSelfDeath(Character killer) { }
     }
-    internal abstract class Boss : Character
+    public abstract class Boss : Character
     {
-        internal string S3T = "";
-        internal string ChanceSystem = "";
-        internal byte LeftSkill = 2;
+        public string S3T = "";
+        public string ChanceSystem = "";
+        public byte LeftSkill = 2;
         public override string ToString()
         {
             string Text = $"{Name}:\nS1: {S1T}\nS2: {S2T}\nS3: {S3T}\nSpecial: {SpecialT}\n";
@@ -550,11 +557,11 @@ namespace EffectOfWar
                 $"Immunsystem: {Immun[0]}\n";
             return Text;
         }
-        internal virtual void SkillThree()
+        public virtual void SkillThree()
         {
 
         }
-        internal override void UseSkill(Skill used)
+        public override void UseSkill(Skill used)
         {
             LeftSkill -= 1;
             switch (used)
@@ -576,26 +583,20 @@ namespace EffectOfWar
             }
         }
 
-        internal virtual Skill RNDSKill()
+        public virtual Skill RNDSKill()
         {
             Random r = new Random();
             if (talent != null && talent.TalentStack[0] > 0 && r.Next(2) == 1) return Skill.talent;
             return Select(0.33f, 0.33f);
         }
 
-        internal virtual Skill Select(float s1, float s2)
+        public virtual Skill Select(float s1, float s2)
         {
             Random r = new Random();
             float chance = (float)r.NextDouble();
             if (chance < s1) return Skill.first;
             else if (chance < s2) return Skill.second;
             else return Skill.third;
-        }
-
-        internal override void init(short hp, byte pa, byte pd, byte ma, byte md, float sens, float know, float immune, float punct)
-        {
-            type = HType.boss;
-            base.init(hp, pa, pd, ma, md, sens, know, immune, punct);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -20,8 +21,6 @@ namespace EffectOfWar
     public partial class MainWindow : Window
     {
         internal Processing processing;
-        internal string exeFolder = AppDomain.CurrentDomain.BaseDirectory;
-        internal string document = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "EffectOfWar");
         internal ObservableCollection<ListItem> warriors = new ObservableCollection<ListItem>();
         internal ObservableCollection<ListItem> rangers = new ObservableCollection<ListItem>();
         internal ObservableCollection<ListItem> supports = new ObservableCollection<ListItem>();
@@ -33,33 +32,26 @@ namespace EffectOfWar
             processing = new Processing(ConsoleD);
             editor = new UIEditor(team1UI, team2UI, processing);
 
-            if (!Directory.Exists(document)) 
+            if (!Directory.Exists(CharacterInfos.document)) 
             {
-                Directory.CreateDirectory(document);
+                Directory.CreateDirectory(CharacterInfos.document);
             }
             
-            this.Icon = new BitmapImage(new Uri(System.IO.Path.Combine(Directory.GetParent(Directory.GetParent(exeFolder).ToString()).ToString(), "icon.ico")));
+            this.Icon = new BitmapImage(new Uri(System.IO.Path.Combine(Directory.GetParent(Directory.GetParent(CharacterInfos.exeFolder).ToString()).ToString(), "icon.ico")));
             this.Loaded += Window_Loaded;
             GamemodeB.Content = $"Gamemode: {processing.gamemode.ToString()}";
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            processing.characterinfosfill();
             // menu
                 Menu.Width = this.Width;
                 Menu.Height = this.Height;
                 Menu.Background = Brushes.LightGray;
                 BasicStatShower.IsReadOnly = true;
-                
-
-                foreach (Character w in AllCharacter.warriors) if (File.Exists(w.img)) warriors.Add(new ListItem { Name = w.Name, type = w.type, ImagePath = w.img });
-                foreach (Character s in AllCharacter.supports) if (File.Exists(s.img)) supports.Add(new ListItem { Name = s.Name, type = s.type, ImagePath = s.img });
-                foreach (Character r in AllCharacter.rangers) if (File.Exists(r.img)) rangers.Add(new ListItem { Name = r.Name, type = r.type, ImagePath = r.img });
-                foreach (Character b in AllCharacter.bosses) if (File.Exists(b.img)) bosses.Add(new ListItem { Name = b.Name, type = b.type, ImagePath = b.img });
-                WarriorsList.ItemsSource = warriors;
-                SupportsList.ItemsSource = supports;
-                RangersList.ItemsSource = rangers;
-                BossesList.ItemsSource = bosses;
+                Menu.IsVisibleChanged += (s, e) => ListboxsEdit();
+                ListboxsEdit();
                 WarriorsList.SelectionChanged += ItemSelect;
                 RangersList.SelectionChanged += ItemSelect;
                 SupportsList.SelectionChanged += ItemSelect;
@@ -69,7 +61,31 @@ namespace EffectOfWar
                 Battleground.Width = this.Width;
                 Battleground.Height = this.Height;
         }
+        private void ListboxsEdit()
+        {
+            warriors.Clear();
+            supports.Clear();
+            rangers.Clear();
+            bosses.Clear();
+            WarriorsList.ItemsSource = null; SupportsList.ItemsSource = null; RangersList.ItemsSource = null; BossesList.ItemsSource = null;
+            WarriorsList.Items.Clear();
+            SupportsList.Items.Clear();
+            RangersList.Items.Clear();
+            BossesList.Items.Clear();
+            BasicStatShower.Text = "";
 
+            if (Menu.Visibility == Visibility.Visible)
+            {
+                WarriorsList.ItemsSource = warriors;
+                SupportsList.ItemsSource = supports;
+                RangersList.ItemsSource = rangers;
+                BossesList.ItemsSource = bosses;
+                CharacterInfos.GetTypeList(HType.warrior).ToList().ForEach(w => warriors.Add(new ListItem { Name = w, type = HType.warrior, ImagePath = CharacterInfos.img(w, HType.warrior) }));
+                CharacterInfos.GetTypeList(HType.support).ToList().ForEach(s => supports.Add(new ListItem { Name = s, type = HType.support, ImagePath = CharacterInfos.img(s, HType.support) }));
+                CharacterInfos.GetTypeList(HType.ranger).ToList().ForEach(r => rangers.Add(new ListItem { Name = r, type = HType.ranger, ImagePath = CharacterInfos.img(r, HType.ranger) }));
+                CharacterInfos.GetTypeList(HType.boss).ToList().ForEach(b => bosses.Add(new ListItem { Name = b, type = HType.boss, ImagePath = CharacterInfos.img(b, HType.boss) }));
+            }
+        }
         public async void ItemSelect(object sender, RoutedEventArgs e)
         {
             ListBox listBox = sender as ListBox;
@@ -78,27 +94,21 @@ namespace EffectOfWar
             if (listBox != null && listBox.SelectedItem is ListItem selectedItem)
             {
                 string name = selectedItem.Name;
-                List<Character>? list;
+                string[]? array;
                 switch (selectedItem.type)
                 {
-                    case HType.ranger: list = AllCharacter.rangers; break;
-                    case HType.warrior: list = AllCharacter.warriors; break;
-                    case HType.support: list = AllCharacter.supports; break;
-                    default: list = null; break;
+                    case HType.ranger: array = CharacterInfos.GetTypeList(HType.ranger); break;
+                    case HType.warrior: array = CharacterInfos.GetTypeList(HType.warrior); break;
+                    case HType.support: array = CharacterInfos.GetTypeList(HType.support); break;
+                    case HType.boss: array = CharacterInfos.GetTypeList(HType.boss); break;
+                    default: array = null; break;
                 }
-                Character selected;
+                Character selected = CharacterInfos.GetCharacter(name);
                 Team? team;
                 if (noTeam.IsChecked == true) team = null;
                 else if (firstTeam.IsChecked == true) team = Team.first;
                 else team = Team.second;
-                try
-                {
-                    selected = list.First(b => b.Name == selectedItem.Name);
-                }
-                catch 
-                {
-                    selected = AllCharacter.bosses.First(b => b.Name == selectedItem.Name);
-                }
+                
                 if (team != null) processing.Add(selected, (Team)team);
                 BasicStatShower.Text = selected.ToString();
 
@@ -169,30 +179,28 @@ namespace EffectOfWar
             Grid.SetRow(up, slot*2);
             ui.Children.Add(up);
             Panel.SetZIndex(up, 2);
-            //up.MouseLeftButtonDown += new MouseEventHandler(proc.EditSlot(team, Direction.up, slot));
+            up.MouseLeftButtonDown += new MouseButtonEventHandler((s, e) => proc.EditSlot(team, Direction.up, slot));
                 
-
-
             // down
             down = new Button() { Content = "↓", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
             Grid.SetRow(down, slot*2+1);
             ui.Children.Add(down);
             Panel.SetZIndex(down, 2);
-            proc.EditSlot(team, Direction.down, slot);
+            down.MouseLeftButtonDown += new MouseButtonEventHandler((s, e) => proc.EditSlot(team, Direction.down, slot));
 
             // s1
             s1 = new Button() { Content = "S1", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
             Grid.SetRow(s1, slot * 2);
             ui.Children.Add(s1);
             Panel.SetZIndex(s1, 1);
-            proc.UseSkill(team, slot, Skill.first);
+            s1.MouseLeftButtonDown += new MouseButtonEventHandler((s, e) => proc.UseSkill(team, slot, Skill.first));
 
             // s2
             s2 = new Button() { Content = "S2", HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
             Grid.SetRow(s2, slot*2+1);
             ui.Children.Add(s2);
             Panel.SetZIndex(s2, 1);
-            proc.UseSkill(team, slot, Skill.second);
+            s2.MouseLeftButtonDown += new MouseButtonEventHandler((s, e) => proc.UseSkill(team, slot, Skill.second));
 
             // talent
             var text = new TextBlock
@@ -215,7 +223,7 @@ namespace EffectOfWar
             Grid.SetRow(talent, slot * 2);
             Panel.SetZIndex(talent, 0);
             ui.Children.Add(talent);
-            proc.UseSkill(team, slot, Skill.talent);
+            talent.MouseLeftButtonDown += new MouseButtonEventHandler((s, e) => proc.UseSkill(team, slot, Skill.talent));
         }
     
         internal void EditLayout(Team team, bool value, params string[] keys)
@@ -378,7 +386,7 @@ namespace EffectOfWar
                             new bool[] { chars[i].TalentT != "", chars[i].S1T != "", chars[i].S2T != "", i != 0, i != chars.Count-1 },
                             "talent", "s1", "s2", "up", "down"
                             );
-                    ui[i].ChangeIMG(chars[i].img);
+                    ui[i].ChangeIMG(CharacterInfos.img(chars[i].GetType().Name.ToString()));
                 }
             }
         }
@@ -387,6 +395,30 @@ namespace EffectOfWar
         {
             Offset(team1, Team.first);
             Offset(team2, Team.second, gm==GameMode.BossBattle?true:false);
+        }
+    }
+
+    public class ImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string path && File.Exists(path))
+            {
+                BitmapImage bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.UriSource = new Uri(path);
+                bmp.DecodePixelWidth = 100;
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.EndInit();
+                bmp.Freeze();
+                return bmp;
+            }
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException(); // ✔ kötelező, de nem használod
         }
     }
 }

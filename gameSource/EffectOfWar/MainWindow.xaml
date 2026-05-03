@@ -6,6 +6,10 @@
         xmlns:local="clr-namespace:EffectOfWar"
         mc:Ignorable="d"
         Title="Effect of War" ResizeMode="CanMinimize" WindowState="Maximized">
+    <Window.Resources>
+        <local:ImageConverter x:Key="ImgConv"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid x:Name="Menu">
 
@@ -46,168 +50,164 @@
 
             <!-- WARRIORS -->
             <ListBox x:Name="WarriorsList" Grid.Row="1" Grid.Column="0"
-             ScrollViewer.VerticalScrollBarVisibility="Auto"
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="DarkOrange">
+         VirtualizingPanel.IsVirtualizing="True"
+         VirtualizingPanel.VirtualizationMode="Recycling"
+         ScrollViewer.CanContentScroll="True"
+         ScrollViewer.VerticalScrollBarVisibility="Auto"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+         Background="DarkOrange">
 
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <VirtualizingStackPanel/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
-                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Margin" Value="2"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
 
-                            <!-- NÉV -->
+                            <Image Source="{Binding ImagePath, Converter={StaticResource ImgConv}}"
+                       Width="100"
+                       Height="100"
+                       Stretch="UniformToFill"/>
+
                             <TextBlock Text="{Binding Name}"
-                                HorizontalAlignment="Center"
-                                FontWeight="Bold"
-                                Foreground="White"
-                                Margin="0,0,0,5"/>
-
-                            <!-- KÉP -->
-                            <Image Source="{Binding ImagePath}"
-                            Width="100"
-                            Height="100"
-                            Stretch="UniformToFill"/>
-
+                           VerticalAlignment="Center"
+                           Margin="10,0,0,0"
+                           FontWeight="Bold"
+                           Foreground="White"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
             <!-- RANGERS -->
             <ListBox x:Name="RangersList" Grid.Row="1" Grid.Column="1"
-             ScrollViewer.VerticalScrollBarVisibility="Auto"
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="DarkRed">
+         VirtualizingPanel.IsVirtualizing="True"
+         VirtualizingPanel.VirtualizationMode="Recycling"
+         ScrollViewer.CanContentScroll="True"
+         ScrollViewer.VerticalScrollBarVisibility="Auto"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+         Background="DarkRed">
 
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <VirtualizingStackPanel/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
-                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Margin" Value="2"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
 
-                            <!-- NÉV -->
+                            <Image Source="{Binding ImagePath, Converter={StaticResource ImgConv}}"
+                       Width="100"
+                       Height="100"
+                       Stretch="UniformToFill"/>
+
                             <TextBlock Text="{Binding Name}"
-                       HorizontalAlignment="Center"
-                       FontWeight="Bold"
-                       Foreground="White"
-                       Margin="0,0,0,5"/>
-
-                            <!-- KÉP -->
-                            <Image Source="{Binding ImagePath}"
-                   Width="100"
-                   Height="100"
-                   Stretch="UniformToFill"/>
-
+                           VerticalAlignment="Center"
+                           Margin="10,0,0,0"
+                           FontWeight="Bold"
+                           Foreground="White"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
             <!-- SUPPORTS -->
             <ListBox x:Name="SupportsList" Grid.Row="1" Grid.Column="2"
-             ScrollViewer.VerticalScrollBarVisibility="Auto"
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Green">
+         VirtualizingPanel.IsVirtualizing="True"
+         VirtualizingPanel.VirtualizationMode="Recycling"
+         ScrollViewer.CanContentScroll="True"
+         ScrollViewer.VerticalScrollBarVisibility="Auto"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+         Background="Green">
 
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <VirtualizingStackPanel/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
-                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Margin" Value="2"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
 
-                            <!-- NÉV -->
+                            <Image Source="{Binding ImagePath, Converter={StaticResource ImgConv}}"
+                       Width="100"
+                       Height="100"
+                       Stretch="UniformToFill"/>
+
                             <TextBlock Text="{Binding Name}"
-                       HorizontalAlignment="Center"
-                       FontWeight="Bold"
-                       Foreground="White"
-                       Margin="0,0,0,5"/>
-
-                            <!-- KÉP -->
-                            <Image Source="{Binding ImagePath}"
-                   Width="100"
-                   Height="100"
-                   Stretch="UniformToFill"/>
-
+                           VerticalAlignment="Center"
+                           Margin="10,0,0,0"
+                           FontWeight="Bold"
+                           Foreground="White"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
             <!-- BOSSES -->
             <ListBox x:Name="BossesList" Grid.Row="1" Grid.Column="3"
-                ScrollViewer.VerticalScrollBarVisibility="Auto"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Purple">
+         VirtualizingPanel.IsVirtualizing="True"
+         VirtualizingPanel.VirtualizationMode="Recycling"
+         ScrollViewer.CanContentScroll="True"
+         ScrollViewer.VerticalScrollBarVisibility="Auto"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+         Background="Purple">
 
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <VirtualizingStackPanel/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Width" Value="120"/>
                         <Setter Property="Height" Value="120"/>
-                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Margin" Value="2"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
 
-                            <!-- NÉV -->
+                            <Image Source="{Binding ImagePath, Converter={StaticResource ImgConv}}"
+                       Width="100"
+                       Height="100"
+                       Stretch="UniformToFill"/>
+
                             <TextBlock Text="{Binding Name}"
-                       HorizontalAlignment="Center"
-                       FontWeight="Bold"
-                       Foreground="White"
-                       Margin="0,0,0,5"/>
-
-                            <!-- KÉP -->
-                            <Image Source="{Binding ImagePath}"
-                   Width="100"
-                   Height="100"
-                   Stretch="UniformToFill"/>
-
+                           VerticalAlignment="Center"
+                           Margin="10,0,0,0"
+                           FontWeight="Bold"
+                           Foreground="White"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
             <!-- ===================== -->
             <!-- STAT BOX -->
             <!-- ===================== -->

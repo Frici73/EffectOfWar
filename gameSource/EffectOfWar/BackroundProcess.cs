@@ -4,16 +4,17 @@ using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
 namespace EffectOfWar
 {
-    enum Team
+    public enum Team
     {
         first, second
     }
-    enum GameMode
+    public enum GameMode
     {
         BossBattle, PvP
     }
@@ -21,15 +22,15 @@ namespace EffectOfWar
     {
         up, down
     }
-    internal class Processing
+    public class Processing
     {
-        internal List<Character> team1 { get; private set; }
-        internal List<Character> team2 { get; private set; }
-        internal byte DeadCharacters;
-        internal byte LiveCharacters => (byte)(team1.Count+team2.Count);
+        public List<Character> team1 { get; private set; }
+        public List<Character> team2 { get; private set; }
+        public byte DeadCharacters;
+        public byte LiveCharacters => (byte)(team1.Count+team2.Count);
         internal GameMode gamemode;
-        internal TextBox tb;
-        internal Processing(TextBox tb)
+        public TextBox tb;
+        public Processing(TextBox tb)
         {
             team1 = new List<Character>();
             team2 = new List<Character>();
@@ -49,7 +50,7 @@ namespace EffectOfWar
             if (team == Team.first)
             {
                 if (team1.Count(d=>d.Name == c.Name) > 0) team1.RemoveAll(d=>d.Name == c.Name);
-                else if (((team1.Count < 3 && gamemode == GameMode.PvP) || (team1.Count < 4 && gamemode == GameMode.BossBattle)) && !team1.Any(e => e.Name == c.Name) && !AllCharacter.bosses.Contains(c))
+                else if (((team1.Count < 3 && gamemode == GameMode.PvP) || (team1.Count < 4 && gamemode == GameMode.BossBattle)) && !team1.Any(e => e.Name == c.Name) && CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) != HType.boss)
                 {
                     Character clone = c.Clone();
                     team1.Add(clone);
@@ -59,7 +60,7 @@ namespace EffectOfWar
             else
             {
                 if (team2.Count(d => d.Name == c.Name) > 0) team2.RemoveAll(d => d.Name == c.Name);
-                else if ((team2.Count < 3 && gamemode == GameMode.PvP && !AllCharacter.bosses.Contains(c) || (team2.Count < 1 && gamemode == GameMode.BossBattle && AllCharacter.bosses.Contains(c))) && !team2.Any(e => e.Name == c.Name))
+                else if ((team2.Count < 3 && gamemode == GameMode.PvP && CharacterInfos.GetCharacterType(c.GetType().Name.ToString())!=HType.boss || (team2.Count < 1 && gamemode == GameMode.BossBattle && CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.boss)) && !team2.Any(e => e.Name == c.Name))
                 {
                     Character clone = c.Clone();
                     team2.Add(clone);
@@ -90,26 +91,26 @@ namespace EffectOfWar
             list.OrderBy(chars => chars.Slot);
         }
         
-        internal List<Character> Characters(byte teamID, bool team) // team: true=csapattárs | false=ellenfél
+        public List<Character> Characters(byte teamID, bool team) // team: true=csapattárs | false=ellenfél
         {
             if (teamID == 1 && team) return team1;
             else if (teamID == 2 && !team) return team1;
             else return team2;
         }
 
-        internal void InsertText(string text)
+        public void InsertText(string text)
         {
             tb.Text += text + Environment.NewLine;
         }
     
-        internal void Dead(Character c)
+        public void Dead(Character c)
         {
             if (c.teamID == 1) Remove(c, Team.first);
             else Remove(c, Team.second);
             DeadCharacters++;
         }
     
-        internal void Reset()
+        public void Reset()
         {
             team1.Clear();
             team2.Clear();
@@ -121,15 +122,49 @@ namespace EffectOfWar
             if (team1.Contains(c)) return Team.first;
             return Team.second;
         }
-        internal bool Correct()
+        public bool Correct()
         {
             return (team1.Count == 3 && gamemode == GameMode.PvP || team1.Count == 4 && gamemode == GameMode.BossBattle) && (team2.Count == 3 && gamemode == GameMode.PvP || team2.Count == 1 && gamemode == GameMode.BossBattle);
         }
     
-        internal void StartOfGame()
+        public void characterinfosfill()
+        {
+            // supports
+            CharacterInfos.AddCharacter("Joker", HType.support, typeof(Joker));
+
+            // rangers
+            CharacterInfos.AddCharacter("Lightning", HType.ranger, typeof(Lightning));
+            CharacterInfos.AddCharacter("Breaker", HType.ranger, typeof(Breaker));
+            CharacterInfos.AddCharacter("Reaper", HType.ranger, typeof(Reaper));
+
+            // warriors
+            CharacterInfos.AddCharacter("Barrier", HType.warrior, typeof(Barrier));
+            CharacterInfos.AddCharacter("Guardian", HType.warrior, typeof(Guardian));
+            CharacterInfos.AddCharacter("Bulldozer", HType.warrior, typeof(Bulldozer));
+            CharacterInfos.AddCharacter("Fulmare", HType.warrior, typeof(Fulmare));
+            CharacterInfos.AddCharacter("ArthurKing", HType.warrior, typeof(ArthurKing));
+            CharacterInfos.AddCharacter("Trash", HType.warrior, typeof(Trash));
+            CharacterInfos.AddCharacter("Afterglow", HType.warrior, typeof(Afterglow));
+            CharacterInfos.AddCharacter("Cooldown", HType.warrior, typeof(Cooldown));
+            CharacterInfos.AddCharacter("Frame", HType.warrior, typeof(Frame));
+            CharacterInfos.AddCharacter("GodOfDeath", HType.warrior, typeof(GodOfDeath));
+            CharacterInfos.AddCharacter("Smoke", HType.warrior, typeof(Smoke));
+            CharacterInfos.AddCharacter("Fortune_teller", HType.warrior, typeof(Fortune_teller));
+
+            // bosses
+            CharacterInfos.AddCharacter("Chaos", HType.boss, typeof(Chaos));
+            CharacterInfos.AddCharacter("Fate", HType.boss, typeof(Fate));
+            CharacterInfos.AddCharacter("Werewolf", HType.boss, typeof(Werewolf));
+            CharacterInfos.AddCharacter("Goblins", HType.boss, typeof(Goblins));
+            CharacterInfos.AddCharacter("Vampire", HType.boss, typeof(Vampire));
+            CharacterInfos.AddCharacter("Moon", HType.boss, typeof(Moon));
+            CharacterInfos.AddCharacter("Solmir", HType.boss, typeof(Solmir));
+            CharacterInfos.AddCharacter("Tarantula", HType.boss, typeof(Tarantula));
+        }
+        public void StartOfGame()
         {
             // kaszt nerf
-            if (gamemode == GameMode.PvP)
+            /*if (gamemode == GameMode.PvP)
             {
                 float[] hPERdd = new float[3] { 1f, 0.66f, 0.33f };
                 float[] dt = new float[3] { 1f, 1.33f, 1.66f };
@@ -152,11 +187,17 @@ namespace EffectOfWar
                     else if (c.type == HType.ranger) c.DMGDealt = hPERdd[rangers];
                     else c.DMGTaken = dt[warriors];
                 }
-            }
+            }*/
 
             // Start of Game
-            team1.ForEach(t => t.StartOfGame());
-            team2.ForEach(t => t.StartOfGame());
+            foreach (Character c in team1)
+            {
+                c.StartOfGame();
+            }
+            foreach (Character c in team2)
+            {
+                c.StartOfGame();
+            }
         }
         internal void UseSkill(Team t, byte index, Skill s)
         {

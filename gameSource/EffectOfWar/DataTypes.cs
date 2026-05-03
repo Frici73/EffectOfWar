@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Media.Animation;
 using System.Xml.Linq;
@@ -13,34 +14,29 @@ using System.Xml.Linq;
 namespace EffectOfWar
 {
 
-    enum TargetingMode
+    public enum TargetingMode
     {
         normal, lowestHp, highestHp, lowestHpPercent, highestHpPercent
     }
-    internal abstract class EffectsBasic
+    public abstract class EffectsBasic
     {
-        public string name { get; private set; }
-        public sbyte turn { get; private set; }
-        public bool cancelable { get; private set; }
-        public bool positive { get; private set; }
-        public Character giver { get; private set; }
+        public string name { get; protected set; }
+        public sbyte turn { get; protected set; }
+        public bool cancelable { get; protected set; }
+        public bool positive { get; protected set; }
+        public Character giver { get; protected set; }
         public abstract bool Give(Character c, bool granted=false);
         public abstract void EndOfTurn(Character c);
 
     }
-    enum Effect
+    public enum Effect
     {
         allstat, maxhp, matk, patk, mdef, pdef, simmun, punctual, manasens, mknow, reg, dmgD, dmgT, debuffImmun, buffImmun, HoTImmun, DoTImmun, taunt, hpDrop, reincarnation, absoluteOne, sleep, Untouchable
     }
-    internal class EffectGroup : EffectsBasic
+    public class EffectGroup : EffectsBasic
     {
-        public string name { get; private set; }
         private Effect[] effects;
         private float[] values;
-        public sbyte turn { get; private set; }
-        public bool positive { get; private set; }
-        public bool cancelable { get; private set; }
-        public Character giver { get; private set; }
         public EffectGroup(string name, Effect[] e, float[] val, sbyte turn, bool buff, bool cancel, Character giver) 
         {
             this.name = name;
@@ -61,9 +57,14 @@ namespace EffectOfWar
             cancelable = cancel;
             this.giver = giver;
         }
+
+        public EffectGroup Clone()
+        {
+            return new EffectGroup(name, effects, values, turn, positive, cancelable, giver);
+        }
         public override bool Give(Character c, bool granted = false)
         {
-            EffectGroup clone = (EffectGroup)this.MemberwiseClone();
+            EffectGroup clone = Clone();
             bool gived = c.GetEffect(clone, granted);
             if (gived)
             {
@@ -314,26 +315,18 @@ namespace EffectOfWar
             return false;
         }
         public void Reset(Character c) => RCalc(c);
-        public float GetValue(Effect e)
-        {
-             return values[Array.IndexOf(effects, e)];
-        }
+        public float GetValue(Effect e) => values[Array.IndexOf(effects, e)];
     }
 
-    enum OverTimeType
+    public enum OverTimeType
     {
         Bleeding, Explosion, Fall, Poison, Lifesteal, ManaCharge, OverRegenerate, Recover
     }
-    internal class OverTime : EffectsBasic
+    public class OverTime : EffectsBasic
     {
-        public Character giver { get; private set; }
-        public string name { get; private set; }
         public float val { get; private set; }
-        private sbyte turn;
         private sbyte startingLifetime;
-        public bool cancelable { get; private set; }
         public OverTimeType type { get; private set; }
-        private bool positive; // t:HoT, f:DoT
 
         public OverTime(Character giver, string name, float val, sbyte lifetime, bool cancelable, OverTimeType type, bool p)
         {
@@ -347,9 +340,14 @@ namespace EffectOfWar
             positive = p;
         }
 
+        public OverTime Clone()
+        {
+            return new OverTime(giver, name, val, startingLifetime, cancelable, type, positive);
+        }
+
         public override bool Give(Character c, bool granted = false)
         {
-            return c.GetEffect((OverTime)this.MemberwiseClone(), granted);
+            return c.GetEffect(Clone(), granted);
         }
         public override void EndOfTurn(Character c)
         {
@@ -395,7 +393,7 @@ namespace EffectOfWar
         }
     }
 
-    internal class Counter
+    public class Counter
     {
         public Character character { get; private set; }
         public sbyte turn {  get; private set; }
@@ -472,7 +470,7 @@ namespace EffectOfWar
         }
     }
 
-    internal class Reflect
+    public class Reflect
     {
         public Character character { get; private set; }
         public sbyte turn { get; private set; }
@@ -508,7 +506,7 @@ namespace EffectOfWar
         }
     }
 
-    internal class Marker : EffectsBasic
+    public class Marker : EffectsBasic
     {
         private ushort fixeddamage;
         private float PercentDamage;
@@ -552,7 +550,6 @@ namespace EffectOfWar
             sideOverTime = overTime;
             this.turn = turn;
         }
-    
         public override void EndOfTurn(Character c)
         {
             if (turn > 0) turn -= 1;
@@ -573,9 +570,13 @@ namespace EffectOfWar
                 c.Markers.RemoveAll(e=>ReferenceEquals(e, this));
             }
         }
+        public Marker Clone()
+        {
+            return new Marker(name, giver, id, fixeddamage, statScale, sideeffect, sideOverTime, turn);
+        }
         public override bool Give(Character c, bool granted=false)
         {
-            c.Markers.Add((Marker)this.MemberwiseClone());
+            c.Markers.Add(Clone());
             return true;
         }
 
@@ -597,11 +598,11 @@ namespace EffectOfWar
         public static byte Count(Character c, Marker m) => (byte)(c.Markers.Count(om => om.name == m.name && om.id == m.id));
     }
 
-    enum HealingType
+    public enum HealingType
     {
         reg, magic, physi, none, both
     }
-    internal class Healing
+    public class Healing
     {
         public HealingType type = HealingType.none;
         public ushort magical;
@@ -623,15 +624,15 @@ namespace EffectOfWar
         }
     }
 
-    enum DMGType
+    public enum DMGType
     {
         magical, physical, both, none
     }
-    enum AttackType
+    public enum AttackType
     {
         Skill, Counter, Reflect
     }
-    internal class DMG
+    public class DMG
     {
         public AttackType atktype = AttackType.Skill;
         public DMGType type = DMGType.both;
@@ -686,11 +687,11 @@ namespace EffectOfWar
         }
     }
 
-    internal class Talent
+    public class Talent
     {
-        internal Character character;
-        internal sbyte[] TalentCooldown = new sbyte[] { 0, 0 }; // hátralévő, kezdő
-        internal byte[] TalentStack = new byte[] { 0, 0 }; // betöltött, maximum
+        public Character character;
+        public sbyte[] TalentCooldown = new sbyte[] { 0, 0 }; // hátralévő, kezdő
+        public byte[] TalentStack = new byte[] { 0, 0 }; // betöltött, maximum
         public Talent(Character master)
         {
             character = master;
@@ -742,7 +743,7 @@ namespace EffectOfWar
         }
     }
 
-    internal class Charge
+    public class Charge
     {
         Character character;
         public ushort[] State = new ushort[] { 0, 0 }; // betöltött, maximum
@@ -765,13 +766,13 @@ namespace EffectOfWar
         }
     }
 
-    internal class Shift
+    public class Shift
     {
         public Character character;
-        internal sbyte[] Mode = new sbyte[] { 1, 1 }; // aktív mód, maximum mód
-        internal ShiftMode Switch;
-        internal sbyte SwitchDirect = 1;
-        internal byte[] Cooldown = new byte[] { 0, 1 }; // hátralévő, kezdő
+        public sbyte[] Mode = new sbyte[] { 1, 1 }; // aktív mód, maximum mód
+        public ShiftMode Switch;
+        public sbyte SwitchDirect = 1;
+        public byte[] Cooldown = new byte[] { 0, 1 }; // hátralévő, kezdő
         public sbyte ActiveMode => Mode[0];
 
         public Shift(Character master, sbyte count, ShiftMode mode, byte cooldown)

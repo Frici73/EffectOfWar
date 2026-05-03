@@ -21,7 +21,6 @@ namespace EffectOfWar
             SpecialT = "Minden kör elején 90% eséllyel: 1 ellenfél kettő különböző statját felcseréli (kivéve hp), 10% eséllyel: az egyik ellenfél maximum életét az aktuális életére csökkenti";
             ChanceSystem = "Az ellenfél frontliner hp-ja > 60%: k1 70%, k2 15%, k3 15%; Ha nem -> Az ellenfél átlagos maxéletének felénél több életük maradt akkor: k1 20%, k2 25%, k3 55%; Ha nem -> kettő ellenfél van csak életben: k1 0%, k2 80%, k3 20%; Ha nem -> k1 0%, k2 50%, k3 50%";
             init(2000, 4, 4, 12, 3, 1, 1.5f, 1, 1);
-            subclass = new Subclass[] { Subclass.Unknown };
         }
 
         public override void StartOfTurn()
@@ -59,14 +58,14 @@ namespace EffectOfWar
                 base.StartOfTurn();
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             Character enemy = GetCharacters(false, 1)[0];
             DMG dmg = new DMG(DMGType.magical, enemy.MaxHitpoints[0]*0.2f, MagicalKnowledge[0], DMGDealt, AttackType.Skill);
             enemy.Defense(this, dmg);
         }
 
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             DMG dmg = new DMG(PhysicalAttack[0], MagicalAttack[0], Punctual[0], MagicalKnowledge[0], DMGDealt, AttackType.Skill);
             foreach (Character enemy in GetCharacters(true, 2))
@@ -75,7 +74,7 @@ namespace EffectOfWar
             }
         }
 
-        internal override void SkillThree() 
+        public override void SkillThree() 
         {
             DMG dmg = new DMG(DMGType.magical, MagicalAttack[0]*1.3f, MagicalKnowledge[0], DMGDealt, AttackType.Skill);
             foreach(Character enemy in GetCharacters(true, 4))
@@ -89,7 +88,7 @@ namespace EffectOfWar
             }
         }
 
-        internal override Skill RNDSKill()
+        public override Skill RNDSKill()
         {
             float s1 = 0; float s2 = 0;
             Character chars = GetCharacters(false, 1, true)[0];
@@ -124,23 +123,22 @@ namespace EffectOfWar
             SpecialT = "Kör elején: - ha van rajta debuff: nő a mágikus és fizikai védelme 50%-ot -ha van rajta counter: nő a mágikus ereje 25%-ot -ha van rajta buff: nő a dmg dealtje 10%-ot (a kövi kör elején törlődnek a hatások) + 10% eséllyel mikor megtámadják akkor befejezteti a kört";
             ChanceSystem = "80%+ hp: k1 10%, k2 45%, k3 45%; 60%+ hp: k1 17%, k2 43%, k3 40%; 40%+ hp: k1 17%, k2 50%, k3 33%; 20%+ hp: k1 33%, k2 40%, k3 27%; 0%+: k1 garantált, k2 20%, k3 80%";
             init(1750, 0, 5, 15, 5, 1, 1.05f, 1, 1.2f);
-            subclass = new Subclass[] { Subclass.Unknown };
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             Healing heal = new Healing(HealingType.magic, MagicalAttack[0]*1.5f, this);
             Healing(heal);
         }
 
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             EffectGroup effect = new EffectGroup("Magical Attack increase", Effect.matk, 0.07f, 2, true, true, this);
             effect.Give(this);
             counter.Edit(1, 0, 0, 1, 2);
         }
 
-        internal override void SkillThree() 
+        public override void SkillThree() 
         {
             byte removed = 0;
             foreach (Character c in GetCharacters(false, 4, true))
@@ -155,7 +153,7 @@ namespace EffectOfWar
             }
         }
 
-        internal override Skill RNDSKill()
+        public override Skill RNDSKill()
         {
             float s1 = 0; float s2 = 0;
             float hp = Hitpoints[0] / MaxHitpoints[0];
@@ -180,30 +178,29 @@ namespace EffectOfWar
             SpecialT = "A sebzése nő 1%-ot minden elveszett % élete után";
             ChanceSystem = "Ha minden ellenfél élete 75%+: k1 10%, k2 15%, k3 75%; Ha nem -> ha a saját élete kevesebb mint 40%: k1 60%, k2 30%, k3 10%; ha nem -> ha a saját élete nagyobb mint 40%: k1 30%, k2 60%, k3 10%";
             init(1300, 15, 4, 0, 4, 1, 1, 1.2f, 1);
-            subclass = new Subclass[] { Subclass.Unknown };
         }
 
-        internal override void BeforeSkillUse(Skill used)
+        public override void BeforeSkillUse(Skill used)
         {
             inc = Hitpoints[0] / MaxHitpoints[0];
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0]*1.5f, Punctual[0], DMGDealt+inc, AttackType.Skill);
             Healing(new Healing(HealingType.physi, GetCharacters(false, 1)[0].Defense(this, dmg)[0], this));
         }
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0]*1.25f, Punctual[0], DMGDealt+inc+link.DeadCharacters*0.15f+link.LiveCharacters*0.25f, AttackType.Skill);
             GetCharacters(false, 1)[0].Defense(this, dmg);
         }
-        internal override void SkillThree()
+        public override void SkillThree()
         {
             DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0]*2.5f, Punctual[0], DMGDealt + inc, AttackType.Skill);
             foreach (Character c in GetCharacters(false, 4)) c.Defense(this, dmg);
         }
-        internal override Skill RNDSKill()
+        public override Skill RNDSKill()
         {
             float s1 = 0; float s2 = 0;
             Character[] enemys = GetCharacters(false, 4, true);
@@ -226,6 +223,7 @@ namespace EffectOfWar
     class Goblins : Boss
     {
         private byte round = 0;
+        public Goblins() : this(600) { }
         public Goblins(short maxhp=600)
         {
             Name = "Goblin";
@@ -235,7 +233,6 @@ namespace EffectOfWar
             SpecialT = "Minden harmadik körben egy új goblin jelenik meg és a játék kezdetén 4 goblin él. (ha 1 gobli él 600, ha kevesebb mint 4 akkor 450, ha 4 vagy több akkor 300 élettel jelennek meg)";
             ChanceSystem = "True random -> k1, k2, k3 egyaránt 33%";
             init(maxhp, 13, 0, 0, 0, 1, 1, 1.75f, 1.5f);
-            subclass = new Subclass[] { Subclass.Unknown };
         }
 
         public override void StartOfTurn()
@@ -252,12 +249,12 @@ namespace EffectOfWar
             link.Add(new Goblins(hp), link.GetTeam(this));
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0]*1.75f, Punctual[0], DMGDealt+0.1f*GetCharacters(true, 6).Length, AttackType.Skill);
             GetCharacters(false, 1)[0].Defense(this, dmg);
         }
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             Character[] enemys = GetCharacters(true, 4);
             DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0], Punctual[0], DMGDealt+enemys.Length*0.15f, AttackType.Skill);
@@ -266,7 +263,7 @@ namespace EffectOfWar
                 c.Defense(this, dmg);
             }
         }
-        internal override void SkillThree()
+        public override void SkillThree()
         {
             EffectGroup effect = new EffectGroup("Phyisical Attack Increase", Effect.patk, 0.05f, 5, true, true, this);
             Healing heal = new Healing(HealingType.physi, PhysicalAttack[0], this);
@@ -288,19 +285,18 @@ namespace EffectOfWar
             SpecialT = "Minden támadás után kap 5%-os maxélet növelő hatást végtelen körig, de törölhető";
             ChanceSystem = "Ha minden ellenfelen legalább 3 blood jelölő van: k1 40%, k2 40%, k3 20% Ha nem -> Ha 2 vagy kevesebb ellenfél él: k1 60%, k2 20%, k3 20% Ha nem -> Ha kevesebb életen van mint 50%: k1 25%, k2 25%, k3 50% Ha nem -> minden 33%";
             init(1100, 6, 4, 10, 3, 1.2f, 1.5f, 1.2f, 1);
-            subclass = new Subclass[] { Subclass.Unknown };
             OverTime ot = new OverTime(this, "Explosion", 5, 1, true, OverTimeType.Explosion, false);
             OwnMarker = new Marker[] { new Marker("Blood", this, 1, 0, null, ot, 7) };
         }
 
-        internal override void AfterSkillUse(Skill used)
+        public override void AfterSkillUse(Skill used)
         {
             if (used == Skill.third) return;
             EffectGroup effect = new EffectGroup("Maxhp increase", Effect.maxhp, 0.05f, -1, true, true, this);
             effect.Give(this);
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             Marker mlink = OwnMarker[0];
             byte count = 0;
@@ -308,7 +304,7 @@ namespace EffectOfWar
             DMG dmg = new DMG(PhysicalAttack[0]*1.5f, MagicalAttack[0]*1.5f, Punctual[0], MagicalAttack[0], DMGDealt+0.15f*count, AttackType.Skill);
             GetCharacters(false, 1)[0].Defense(this, dmg);
         }
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             DMG dmg = new DMG(DMGType.magical, MagicalAttack[0], MagicalKnowledge[0], DMGDealt, AttackType.Skill);
             Marker mlink = OwnMarker[0];
@@ -320,7 +316,7 @@ namespace EffectOfWar
                 dmg.magicalknowledge -= count * 0.3f;
             }
         }
-        internal override void SkillThree()
+        public override void SkillThree()
         {
             foreach (Character c in GetCharacters(false, 4, true))
             {
@@ -331,7 +327,7 @@ namespace EffectOfWar
                 }
             }
         }
-        internal override Skill RNDSKill()
+        public override Skill RNDSKill()
         {
             Character[] enemys = GetCharacters(false, 4, true);
             Marker mlink = OwnMarker[0];
@@ -366,7 +362,7 @@ namespace EffectOfWar
             shift = new Shift(this, 3, ShiftMode.line, 0);
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             DMG dmg;
             switch (shift.ActiveMode)
@@ -381,7 +377,7 @@ namespace EffectOfWar
             }
             GetCharacters(false, 1)[0].Defense(this, dmg);
         }
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             switch (shift.ActiveMode) 
             {
@@ -391,7 +387,7 @@ namespace EffectOfWar
                 default: throw new Exception("Moon mode is invalid");
             }
         }
-        internal override void SkillThree()
+        public override void SkillThree()
         {
             DMG dmg;
             switch (shift.ActiveMode) 
@@ -412,7 +408,7 @@ namespace EffectOfWar
                 enemy.Defense(this, dmg);
             }
         }
-        internal override Skill RNDSKill()
+        public override Skill RNDSKill()
         {
             float s1 = 0; float s2 = 0;
             if (counter.turn == 0) { s1 = 0.4f; s2 = 0.5f; }
@@ -425,7 +421,7 @@ namespace EffectOfWar
             EffectGroup effect = new EffectGroup("Reincarnation", Effect.reincarnation, 1, -1, true, false, this);
             effect.Give(this);
         }
-        internal override void OnSelfDeath(Character killer)
+        public override void OnSelfDeath(Character killer)
         {
             link.Add(this, link.GetTeam(this));
             StartOfGame();
@@ -451,14 +447,14 @@ namespace EffectOfWar
             OwnMarker = new Marker[] { new Marker("Mana", this, 1, 0, null, null, -1)};
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             forskill = true;
             SpecialTechnique();
             DMG dmg = new DMG(DMGType.magical, MagicalAttack[0]*(1.2f+used*0.2f), MagicalKnowledge[0], DMGDealt, AttackType.Skill);
             foreach (Character enemy in GetCharacters(false, 4)) enemy.Defense(this, dmg);
         }
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             forskill = true;
             SpecialTechnique();
@@ -469,7 +465,7 @@ namespace EffectOfWar
             ot.Give(enemy);
         }
 
-        internal override void SkillThree()
+        public override void SkillThree()
         {
             forskill = true;
             SpecialTechnique();
@@ -477,7 +473,7 @@ namespace EffectOfWar
             Healing(heal);
         }
 
-        internal override ushort[] Defense(Character attacker, DMG dmg)
+        public override ushort[] Defense(Character attacker, DMG dmg)
         {
             forskill = false;
             SpecialTechnique();
@@ -487,7 +483,7 @@ namespace EffectOfWar
             return back;
         }
 
-        internal override void SpecialTechnique()
+        public override void SpecialTechnique()
         {
             Random r = new Random();
             byte count = (byte)Markers.Count(m => m == OwnMarker[0]);
@@ -505,7 +501,7 @@ namespace EffectOfWar
         {
             for (int i = 0; i < 15; i++) OwnMarker[0].Give(this);
         }
-        internal override void Talent()
+        public override void Talent()
         {
             Markers.RemoveAll(m=>m == OwnMarker[0]);
             for (int i = 0; i < 4; i++) OwnMarker[0].Give(this);
@@ -524,14 +520,14 @@ namespace EffectOfWar
             init(1450, 7, 4, 7, 4, 1, 1.2f, 1, 1.2f);
         }
 
-        internal override void SkillOne()
+        public override void SkillOne()
         {
             DMG dmg = new DMG(PhysicalAttack[0]*1.2f, MagicalAttack[0]*1.2f, Punctual[0], MagicalAttack[0], DMGDealt, AttackType.Skill);
             Character enemy = GetCharacters(false, 1, true, TargetingMode.lowestHp)[0];
             if (enemy.effects.Any(e => e.Have(Effect.taunt))) dmg.dmgD += 0.5f;
             enemy.Defense(this, dmg);
         }
-        internal override void SkillTwo()
+        public override void SkillTwo()
         {
             OverTime poison = new OverTime(this, "Poison", 0.5f, -1, true, OverTimeType.Poison, false);
             DMG dmg = new DMG(PhysicalAttack[0], MagicalAttack[0], Punctual[0], MagicalKnowledge[0], DMGDealt, AttackType.Skill);
@@ -544,7 +540,7 @@ namespace EffectOfWar
                 poison.Give(enemy);
             }
         }
-        internal override void SkillThree()
+        public override void SkillThree()
         {
             DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0], Punctual[0], DMGDealt, AttackType.Skill);
             foreach (Character enemy in GetCharacters(false, 4, true))
