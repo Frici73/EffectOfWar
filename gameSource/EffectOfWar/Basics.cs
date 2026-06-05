@@ -5,6 +5,7 @@ using System.Configuration;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace EffectOfWar
         public byte teamID = 0;
         public byte Slot = 0;  // 0, 1, 2, 3
         public float DMGDealt = 2;
-        public float DMGTaken = 1;
+        public float DMGResistance = 1;
         public float HealDealt = 1;
         public float regeneration = 0.01f;
         public List<short> LostedHitpointsInRounds = new List<short>() { 0 };
@@ -91,15 +92,26 @@ namespace EffectOfWar
         {
             string Text = $"{Name}:\nS1: {S1T}\nS2: {S2T}\nSpecial: {SpecialT}\n";
             if (TalentT != null && TalentT != "") Text += $"{TalentT}\n";
-            Text += $"HP: {Hitpoints[0]} / {MaxHitpoints[0]}\n" +
+            Text += $"Max HP: {MaxHitpoints[0]}\n" +
                 $"Magical Attack: {MagicalAttack[0]}\n" +
                 $"Magical Defense: {MagicalDefense[0]}\n" +
                 $"Physical Attack: {PhysicalAttack[0]}\n" +
                 $"Physical Defense: {PhysicalDefense[0]}\n" +
-                $"Magical knowledge: {MagicalKnowledge[0]}\n" +
-                $"Mana sensitivy: {ManaSensitivity[0]}\n" +
-                $"Punctual: {Punctual[0]}\n" +
-                $"Immunsystem: {Immun[0]}\n";
+                $"Magical knowledge: {MagicalKnowledge[0]:F2}\n" +
+                $"Mana sensitivy: {ManaSensitivity[0]:F2}\n" +
+                $"Punctual: {Punctual[0]:F2}\n" +
+                $"Immunsystem: {Immun[0]:F2}\n";
+            return Text;
+        }
+        public string State()
+        {
+            string Text = $"{Name}:\nHP: {Hitpoints[0]} / {MaxHitpoints[0]} - {((float)Hitpoints[0] / (float)MaxHitpoints[0]*100):F2}%\n" +
+                $"Shield: {shield[0] + shield[1]}\n" +
+                $"Effects: {(effects.Count > 0 ? string.Join(", ", effects.Select(e => e.name)) : "None")}\n" +
+                $"DoTs: {(DoTs.Count > 0 ? string.Join(", ", DoTs.Select(e => e.name)) : "None")}\n" +
+                $"HoTs: {(HoTs.Count > 0 ? string.Join(", ", HoTs.Select(e => e.name)) : "None")}\n" +
+                $"Markers: {(Markers.Count > 0 ? string.Join(", ", Markers.Select(e => e.name)) : "None")}\n";
+
             return Text;
         }
         public virtual void TeamChange(Team team, Processing process)
@@ -133,6 +145,7 @@ namespace EffectOfWar
             counter = new Counter(this);
             reflect = new Reflect(this);
         }
+        public virtual void SpecialTechnique(object arg) { }
         public virtual void SpecialTechnique() { }
         public virtual Character Clone()
         {
@@ -206,17 +219,17 @@ namespace EffectOfWar
         // shift
         public virtual void OnShifting() { }
 
-        // before dmgtaken
+        // before DMGtaken
         public virtual void BeforeTeammateGetDMG(Character attacker, Character teammate, DMG dmg) { }
         public virtual void BeforeEnemyGetDMG(Character attacker, Character enemy, DMG dmg) { }
         public virtual void BeforeSelfGetDMG(Character attacker, DMG dmg) { }
 
-        // after dmgtaken
+        // after DMGtaken
         public virtual void AfterSelfGetDMG(Character attacker, DMG dmg, short taked) { }
         public virtual void AfterTeammateGetDMG(Character attacker, Character teammate, DMG dmg, short taked) { }
         public virtual void AfterEnemyGetDMG(Character attacker, Character enemy, DMG dmg, short taked) { }
 
-        // dmgtaken hp, pajzs, összes
+        // DMGtaken hp, pajzs, összes
         public virtual ushort[] Defense(Character attacker, DMG dmg)
         {
             if (effects.Any(e => e.Have(Effect.Untouchable))) return new ushort[] { 0, 0, 0 };
@@ -233,28 +246,40 @@ namespace EffectOfWar
             ushort val = 0;
             if (dmg.atktype != AttackType.Reflect)
             {
-                val += Converter.ConvertingToUshort(dmg.physical * dmg.punctual - PhysicalAttack[0] * Punctual[0]);
-                val += Converter.ConvertingToUshort(dmg.magical * dmg.magicalknowledge - MagicalDefense[0] * MagicalKnowledge[0]);
-                val = Converter.ConvertingToUshort(val * (dmg.dmgD - DMGTaken));
+                val += Converter.ConvertingToUshort(dmg.physical * dmg.punctual - (float)PhysicalAttack[0] * Punctual[0]);
+                val += Converter.ConvertingToUshort(dmg.magical * dmg.magicalknowledge - (float)MagicalDefense[0] * MagicalKnowledge[0]);
+                val = Converter.ConvertingToUshort((float)val * (dmg.dmgD - DMGResistance));
             }
             else val = Converter.ConvertingToUshort(dmg.physical);
-
             TotalDamageTaken += Converter.ConvertingToUshort(val);
             attacker.TotalDamageDealt += Converter.ConvertingToUshort(val);
-            ushort toshield = Converter.ConvertingToUshort(shield[0]-val);
-            if (toshield < 0)
+
+            short toshield = 0;
+            if (shield[0] >= val)
             {
+                shield[0] -= val;
+                toshield = Converter.ConvertingToShort(val);
+                val = 0;
+            }
+            else if (shield[0] + shield[1] >= val)
+            {
+                toshield = Converter.ConvertingToShort(shield[0]);
+                val -= shield[0];
                 shield[0] = 0;
-                shield[1] -= Converter.ConvertingToUshort(toshield * -1);
+                shield[1] -= Converter.ConvertingToUshort(val);
+                toshield += Converter.ConvertingToShort(val);
+                val = 0;
             }
             else
             {
-                toshield *= Converter.ConvertingToUshort(-1);
-                shield[0] -= Converter.ConvertingToUshort(toshield);
+                toshield = Converter.ConvertingToShort(shield[0] + shield[1]);
+                val -= Converter.ConvertingToUshort(shield[0] + shield[1]);
+                shield[0] = 0;
+                shield[1] = 0;
             }
-            val -= toshield;
-            link.InsertText($"{Name} sérült {attacker.Name} miatt pajzsba {toshield.ToString()}");
-            link.InsertText($"{Name} sérült {attacker.Name} miatt életbe {val.ToString()}");
+
+            link.InsertText($"{Name} sérült {attacker.Name} miatt pajzsba {Converter.ConvertingToUshort(toshield).ToString()}");
+            link.InsertText($"{Name} sérült {attacker.Name} miatt életbe {Converter.ConvertingToUshort(val).ToString()}");
             if (val > 0)
             {
                 Hitpoints[0] -= Converter.ConvertingToShort(val);
@@ -280,7 +305,7 @@ namespace EffectOfWar
             if (dmg.atktype != AttackType.Reflect)
             {
                 DMG reflectDMG = new DMG(val, 0, 0, 0, 0, AttackType.Reflect);
-                reflect.Upgrade(dmg);
+                reflect.Upgrade(reflectDMG);
             }
 
             EffectGroup? hpdrop = effects.FirstOrDefault(e => e.Have(Effect.hpDrop));
@@ -295,7 +320,7 @@ namespace EffectOfWar
                 ProbablyDead(attacker);
             }
 
-            return new ushort[] { val, toshield, Converter.ConvertingToUshort(val + toshield) }; // hp, pajzs, összes
+            return new ushort[] { val, Converter.ConvertingToUshort(toshield), Converter.ConvertingToUshort(val + toshield) }; // hp, pajzs, összes
         }
 
         // Before get effect
@@ -322,20 +347,11 @@ namespace EffectOfWar
                 enemy.BeforeEnemyGetEffect(effect, this);
             }
 
-            Random r = new Random();
             bool gived = true;
-            if (!granted) 
-            { 
-                if (effect.GetType() == typeof(OverTime) && effect.positive && r.NextDouble() >= HoTImmunity[0])
-                    HoTs.Add((OverTime)effect);
-                else if (effect.GetType() == typeof(OverTime) && !effect.positive && r.NextDouble() >= DoTImmunity[0])
-                    DoTs.Add((OverTime)effect);
-                else if (effect.GetType() == typeof(EffectGroup) && effect.positive && r.NextDouble() >= BuffImmunity[0])
-                    effects.Add((EffectGroup)effect);
-                else if (effect.GetType() == typeof(EffectGroup) && !effect.positive && r.NextDouble() >= DebuffImmunity[0])
-                    effects.Add((EffectGroup)effect);
-                else gived = false;
-            }
+            if (effect.GetType() == typeof(OverTime) && effect.positive && (granted || Rnd.R(1f) >= HoTImmunity[0])) HoTs.Add((OverTime)effect);
+            else if (effect.GetType() == typeof(OverTime) && !effect.positive && (granted || Rnd.R(1f) >= DoTImmunity[0])) DoTs.Add((OverTime)effect);
+            else if (effect.GetType() == typeof(EffectGroup) && effect.positive && (granted || Rnd.R(1f) >= BuffImmunity[0])) effects.Add((EffectGroup)effect);
+            else if (effect.GetType() == typeof(EffectGroup) && !effect.positive && (granted || Rnd.R(1f) >= DebuffImmunity[0])) effects.Add((EffectGroup)effect);
 
             AfterSelfGetEffect(effect, gived);
             foreach (Character teammate in link.Characters(teamID, true))
@@ -365,16 +381,15 @@ namespace EffectOfWar
             if (!effects.Any(e => e.Have(Effect.Untouchable)))
             {
                 Healing reg = new Healing(HealingType.reg, Converter.ConvertingToShort(MaxHitpoints[0] * regeneration * Immun[0]), this);
-                Markers.ForEach(e => e.EndOfTurn(this));
+                for (int i = Markers.Count-1; i >= 0; i--) Markers[i].EndOfTurn(this);
 
                 EffectGroup? absoluteOne = effects.FirstOrDefault(e => e.Have(Effect.absoluteOne));
                 if (absoluteOne != null && absoluteOne.turn == 1) Hitpoints[0] *= Converter.ConvertingToShort(-1);
-                effects.ForEach(e => e.EndOfTurn(this));
-
-                HoTs.ForEach(e => e.EndOfTurn(this));
-                DoTs.ForEach(e => e.EndOfTurn(this));
-                talent.EndOfTurn();
-                shift.EndOfTurn();
+                for (int i = effects.Count-1; i >= 0; i--) effects[i].EndOfTurn(this);
+                for (int i = HoTs.Count-1; i >= 0; i--) HoTs[i].EndOfTurn(this);
+                for (int i = DoTs.Count-1; i >= 0; i--) DoTs[i].EndOfTurn(this);
+                talent?.EndOfTurn();
+                shift?.EndOfTurn();
             }
             LostedHitpointsInRounds.Add(0);
         }
@@ -492,15 +507,15 @@ namespace EffectOfWar
                     }
                     characters = taunted;
                 }
-                characters = nontaunted;
+                else characters = nontaunted;
             }
             else characters = team;
             if (mode == TargetingMode.lowestHp) characters.Sort((a, b) => a.Hitpoints[0].CompareTo(b.Hitpoints[0]));
             else if (mode == TargetingMode.highestHp) { characters.Sort((a, b) => a.Hitpoints[0].CompareTo(b.Hitpoints[0])); characters.Reverse(); }
             else if (mode == TargetingMode.lowestHpPercent) characters.Sort((a, b) => ((float)a.Hitpoints[0] / a.MaxHitpoints[0]).CompareTo((float)b.Hitpoints[0] / b.MaxHitpoints[0]));
             else if (mode == TargetingMode.highestHpPercent) { characters.Sort((a, b) => ((float)a.Hitpoints[0] / a.MaxHitpoints[0]).CompareTo((float)b.Hitpoints[0] / b.MaxHitpoints[0])); characters.Reverse(); }
-
-            return characters.ToArray();
+            else if (mode == TargetingMode.random) { characters = characters.Shuffle().ToList(); }
+            return characters.Take(count).ToArray();
         }
 
         // death
@@ -551,10 +566,10 @@ namespace EffectOfWar
                 $"Magical Defense: {MagicalDefense[0]}\n" +
                 $"Physical Attack: {PhysicalAttack[0]}\n" +
                 $"Physical Defense: {PhysicalDefense[0]}\n" +
-                $"Magical knowledge: {MagicalKnowledge[0]}\n" +
-                $"Mana sensitivy: {ManaSensitivity[0]}\n" +
-                $"Punctual: {Punctual[0]}\n" +
-                $"Immunsystem: {Immun[0]}\n";
+                $"Magical knowledge: {MagicalKnowledge[0]:F2}\n" +
+                $"Mana sensitivity: {ManaSensitivity[0]:F2}\n" +
+                $"Punctual: {Punctual[0]:F2}\n" +
+                $"Immunsystem: {Immun[0]:F2}\n";
             return Text;
         }
         public virtual void SkillThree()
@@ -585,15 +600,13 @@ namespace EffectOfWar
 
         public virtual Skill RNDSKill()
         {
-            Random r = new Random();
-            if (talent != null && talent.TalentStack[0] > 0 && r.Next(2) == 1) return Skill.talent;
+            if (talent != null && talent.TalentStack[0] > 0 && Rnd.R(2) == 1) return Skill.talent;
             return Select(0.33f, 0.33f);
         }
 
         public virtual Skill Select(float s1, float s2)
         {
-            Random r = new Random();
-            float chance = (float)r.NextDouble();
+            float chance = Rnd.R(1f);
             if (chance < s1) return Skill.first;
             else if (chance < s2) return Skill.second;
             else return Skill.third;

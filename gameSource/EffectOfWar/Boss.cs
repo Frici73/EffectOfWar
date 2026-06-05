@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Shapes;
 
 namespace EffectOfWar
@@ -17,7 +18,7 @@ namespace EffectOfWar
             Name = "Chaos";
             S1T = "Megtámad 1 ellenfelet a célpont maxéletének 20%-ával (mágikusan)";
             S2T = "Megtámad 2 ellenfelet 200% M erővel és 100% F erővel";
-            S3T = "Megtámad minden ellenfelet 130% M erővel, minden hp-ban sérülő célpont után nő minden stata 5%-ot";
+            S3T = "Megtámad 4 ellenfelet 130% M erővel, minden hp-ban sérülő célpont után nő minden stata 5%-ot";
             SpecialT = "Minden kör elején 90% eséllyel: 1 ellenfél kettő különböző statját felcseréli (kivéve hp), 10% eséllyel: az egyik ellenfél maximum életét az aktuális életére csökkenti";
             ChanceSystem = "Az ellenfél frontliner hp-ja > 60%: k1 70%, k2 15%, k3 15%; Ha nem -> Az ellenfél átlagos maxéletének felénél több életük maradt akkor: k1 20%, k2 25%, k3 55%; Ha nem -> kettő ellenfél van csak életben: k1 0%, k2 80%, k3 20%; Ha nem -> k1 0%, k2 50%, k3 50%";
             init(2000, 4, 4, 12, 3, 1, 1.5f, 1, 1);
@@ -25,10 +26,9 @@ namespace EffectOfWar
 
         public override void StartOfTurn()
         {
-            Random r = new Random();
             Character[] enemyTeam = GetCharacters(false, 4, false);
-            Character enemy = enemyTeam[r.Next(enemyTeam.Length)];
-            if (r.Next(10) == 9)
+            Character enemy = enemyTeam[Rnd.R(enemyTeam.Length)];
+            if (Rnd.R(10) == 9)
             {
                 List<Array> stats = new List<Array>
                 {
@@ -42,12 +42,12 @@ namespace EffectOfWar
                 enemy.Punctual,
                 enemy.Immun
                 };
-                int i = r.Next(stats.Count);
+                int i = Rnd.R(stats.Count);
                 int j;
 
                 do
                 {
-                    j = r.Next(stats.Count);
+                    j = Rnd.R(stats.Count);
                 } while (i == j);
 
                 object? temp = stats[i].GetValue(0);
@@ -68,7 +68,7 @@ namespace EffectOfWar
         public override void SkillTwo()
         {
             DMG dmg = new DMG(PhysicalAttack[0], MagicalAttack[0], Punctual[0], MagicalKnowledge[0], DMGDealt, AttackType.Skill);
-            foreach (Character enemy in GetCharacters(true, 2))
+            foreach (Character enemy in GetCharacters(false, 2))
             {
                 enemy.Defense(this, dmg);
             }
@@ -77,7 +77,7 @@ namespace EffectOfWar
         public override void SkillThree() 
         {
             DMG dmg = new DMG(DMGType.magical, MagicalAttack[0]*1.3f, MagicalKnowledge[0], DMGDealt, AttackType.Skill);
-            foreach(Character enemy in GetCharacters(true, 4))
+            foreach(Character enemy in GetCharacters(false, 4))
             {
                 ushort[] taked = enemy.Defense(this, dmg);
                 if (taked[0] > 0)
@@ -152,7 +152,10 @@ namespace EffectOfWar
                 c.Defense(this, dmg);
             }
         }
-
+        public override void AfterSelfGetDMG(Character attacker, DMG dmg, short taked)
+        {
+            if (dmg.atktype == AttackType.Skill && Rnd.R(100) < 10) link.TurnOff();
+        }
         public override Skill RNDSKill()
         {
             float s1 = 0; float s2 = 0;
@@ -235,18 +238,23 @@ namespace EffectOfWar
             init(maxhp, 13, 0, 0, 0, 1, 1, 1.75f, 1.5f);
         }
 
-        public override void StartOfTurn()
+        public override void SpecialTechnique()
         {
-            base.StartOfTurn();
-            round++;
-            Character[] teammates = GetCharacters(true, 6, true);
+            Character[] teammates = GetCharacters(true, -1, true);
             if (round != 2 || teammates[0] != this || teammates.Length == 6) return;
             round = 0;
             short hp = 0;
             if (teammates.Length == 1) hp = 600;
-            if (teammates.Length < 4) hp = 450;
+            else if (teammates.Length < 4) hp = 450;
             else hp = 300;
-            link.Add(new Goblins(hp), link.GetTeam(this));
+            link.AddClone(new Goblins(hp), link.GetTeam(this));
+        }
+
+        public override void StartOfTurn()
+        {
+            base.StartOfTurn();
+            round++;
+            SpecialTechnique();
         }
 
         public override void SkillOne()
@@ -270,6 +278,14 @@ namespace EffectOfWar
             foreach (Character c in GetCharacters(true, 6, true))
             {
                 c.Healing(heal);
+            }
+        }
+        public override void StartOfGame()
+        {
+            while (GetCharacters(true, -1, true).Length < 4)
+            {
+                round = 2;
+                SpecialTechnique();
             }
         }
     }
@@ -477,22 +493,21 @@ namespace EffectOfWar
         {
             forskill = false;
             SpecialTechnique();
-            DMGTaken += 0.1f * used;
+            DMGResistance += 0.1f * used;
             var back = base.Defense(attacker, dmg);
-            DMGTaken -= 0.1f * used;
+            DMGResistance -= 0.1f * used;
             return back;
         }
 
         public override void SpecialTechnique()
         {
-            Random r = new Random();
             byte count = (byte)Markers.Count(m => m == OwnMarker[0]);
             if (count == 0) used = 0;
             else
             {
                 byte removed = 0;
-                if (forskill) used = (byte)r.Next(1, (int)Math.Min((byte)3, count));
-                else used = (byte)r.Next(1, (int)Math.Min((byte)2, count));
+                if (forskill) used = (byte)Rnd.R(1, (int)Math.Min((byte)3, count));
+                else used = (byte)Rnd.R(1, (int)Math.Min((byte)2, count));
                 foreach (Marker m in Markers.ToList()) if (m == OwnMarker[0] && removed < used) Markers.Remove(m);
             }
         }

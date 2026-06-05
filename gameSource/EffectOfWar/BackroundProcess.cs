@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Formats.Asn1;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace EffectOfWar
@@ -22,6 +24,10 @@ namespace EffectOfWar
     {
         up, down
     }
+    public enum Operator
+    {
+        plus, minusz, divide, multiplication
+    }
     public class Processing
     {
         public List<Character> team1 { get; private set; }
@@ -29,14 +35,29 @@ namespace EffectOfWar
         public byte DeadCharacters;
         public byte LiveCharacters => (byte)(team1.Count+team2.Count);
         internal GameMode gamemode;
-        public TextBox tb;
-        public Processing(TextBox tb)
+        public TextBox Console;
+
+        // frontend & backend
+        private Tuple<byte, Skill>?[] useSkills = new Tuple<byte, Skill>?[6];
+        private Team activeTeam = Team.first;
+        private bool mode = true; // true=selecting | false=deleting
+        private TextBox selectedSkills;
+        private TextBox CharacterDataInWar;
+        private UIEditor editor;
+
+        public Processing(TextBox tb, TextBox tb2, TextBox tb3)
         {
             team1 = new List<Character>();
             team2 = new List<Character>();
             DeadCharacters = 0;
             gamemode = GameMode.PvP;
-            this.tb = tb;
+            Console = tb;
+            selectedSkills = tb2;
+            CharacterDataInWar = tb3;
+        }
+        internal void linkEditor(UIEditor e)
+        {
+            editor = e;
         }
         internal void Change()
         {
@@ -50,7 +71,7 @@ namespace EffectOfWar
             if (team == Team.first)
             {
                 if (team1.Count(d=>d.Name == c.Name) > 0) team1.RemoveAll(d=>d.Name == c.Name);
-                else if (((team1.Count < 3 && gamemode == GameMode.PvP) || (team1.Count < 4 && gamemode == GameMode.BossBattle)) && !team1.Any(e => e.Name == c.Name) && CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) != HType.boss)
+                else if (((team1.Count < 3 && gamemode == GameMode.PvP) || (team1.Count < 4 && gamemode == GameMode.BossBattle)) && CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) != HType.boss)
                 {
                     Character clone = c.Clone();
                     team1.Add(clone);
@@ -60,7 +81,7 @@ namespace EffectOfWar
             else
             {
                 if (team2.Count(d => d.Name == c.Name) > 0) team2.RemoveAll(d => d.Name == c.Name);
-                else if ((team2.Count < 3 && gamemode == GameMode.PvP && CharacterInfos.GetCharacterType(c.GetType().Name.ToString())!=HType.boss || (team2.Count < 1 && gamemode == GameMode.BossBattle && CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.boss)) && !team2.Any(e => e.Name == c.Name))
+                else if ((team2.Count < 3 && gamemode == GameMode.PvP && CharacterInfos.GetCharacterType(c.GetType().Name.ToString())!=HType.boss || (team2.Count < 1 && gamemode == GameMode.BossBattle && CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.boss)))
                 {
                     Character clone = c.Clone();
                     team2.Add(clone);
@@ -74,21 +95,29 @@ namespace EffectOfWar
             list.RemoveAll(e => e.Name == c.Name);
             list.ForEach(c2 => c.Slot = (byte)list.IndexOf(c));
         }
+
+        internal void AddClone(Character c, Team team)
+        {
+            Character clone = c.Clone();
+            if (team == Team.first) team1.Add(clone);
+            else team2.Add(clone);
+            clone.TeamChange(team, this);
+        }
         
         internal void EditSlot(Team team, Direction dir, byte index)
         {
             List<Character> list = team==Team.first ? team1 : team2;
-            if (dir == Direction.up)
-            {
-                list[index].Slot -= 1;
-                list[index - 1].Slot += 1;
-            }
-            else 
-            {
-                list[index].Slot += 1;
-                list[index + 1].Slot -= 1;
-            }
-            list.OrderBy(chars => chars.Slot);
+            int direction = dir==Direction.up?-1:1;
+            byte slot = list[index].Slot;
+            list[index].Slot = list[index + direction].Slot;
+            list[index + direction].Slot = slot;
+            list = list.OrderBy(e => e.Slot).ToList();
+            team1 = team1.OrderBy(e => e.Slot).ToList();
+            team2 = team2.OrderBy(e => e.Slot).ToList();
+
+            string[] paths = new string[list.Count];
+            for (int i = 0; i < list.Count; i++) paths[i] = list[i].GetType().Name;
+            editor.Offset(list, team, team == Team.second && gamemode == GameMode.BossBattle);
         }
         
         public List<Character> Characters(byte teamID, bool team) // team: true=csapattárs | false=ellenfél
@@ -98,10 +127,117 @@ namespace EffectOfWar
             else return team2;
         }
 
-        public void InsertText(string text)
+        public object GetPropertyValue(object obj, string fieldName, int? index = null)
         {
-            tb.Text += text + Environment.NewLine;
+            var field = obj.GetType().GetField(fieldName);
+
+            if (field == null)
+                return null;
+
+            var value = field.GetValue(obj);
+
+            if (index.HasValue)
+            {
+                if (value is Array arr)
+                {
+                    int i = index.Value;
+
+                    if (i < 0 || i >= arr.Length)
+                        return null;
+
+                    return arr.GetValue(i);
+                }
+
+                return null;
+            }
+
+            return value;
         }
+
+        public void SetPropertyValue(object obj, string fieldName, object value, int? index = null)
+        {
+            var field = obj.GetType().GetField(fieldName);
+
+            if (field == null)
+                return;
+
+            if (index.HasValue)
+            {
+                var arr = field.GetValue(obj) as Array;
+                if (arr == null)
+                    return;
+
+                int i = index.Value;
+                if (i < 0 || i >= arr.Length)
+                    return;
+
+                var elemType = arr.GetType().GetElementType();
+                var converted = Convert.ChangeType(value, elemType);
+
+                arr.SetValue(converted, i);
+                return;
+            }
+
+            var targetType = field.FieldType;
+            var safeValue = Convert.ChangeType(value, targetType);
+
+            field.SetValue(obj, safeValue);
+        }
+
+        public void ChangePropertyValue(object obj, string fieldName, object value, Operator o = Operator.plus, int? index = null)
+        {
+            var field = obj.GetType().GetField(fieldName);
+
+            if (field == null)
+                return;
+
+            var currentValue = field.GetValue(obj);
+
+            if (currentValue == null)
+                return;
+
+            // ===== ARRAY =====
+            if (index.HasValue && currentValue is Array arr)
+            {
+                int i = index.Value;
+                if (i < 0 || i >= arr.Length)
+                    return;
+
+                var elemType = arr.GetType().GetElementType();
+
+                dynamic a = arr.GetValue(i);
+                dynamic b = value;
+
+                dynamic rawResult =
+                    o == Operator.plus ? a + b :
+                    o == Operator.minusz ? a - b :
+                    o == Operator.divide ? a / b :
+                    a * b;
+
+                var result = Convert.ChangeType(rawResult, elemType);
+
+                arr.SetValue(result, i);
+                return;
+            }
+
+            // ===== SCALAR =====
+            var fieldType = field.FieldType;
+
+            dynamic x = currentValue;
+            dynamic y = value;
+
+            dynamic raw =
+                o == Operator.plus ? x + y :
+                o == Operator.minusz ? x - y :
+                o == Operator.divide ? x / y :
+                x * y;
+
+            var converted = Convert.ChangeType(raw, fieldType);
+
+            field.SetValue(obj, converted);
+        }
+
+        public void InsertText(string text) => Console.Text += text + Environment.NewLine;
     
         public void Dead(Character c)
         {
@@ -136,6 +272,18 @@ namespace EffectOfWar
             CharacterInfos.AddCharacter("Lightning", HType.ranger, typeof(Lightning));
             CharacterInfos.AddCharacter("Breaker", HType.ranger, typeof(Breaker));
             CharacterInfos.AddCharacter("Reaper", HType.ranger, typeof(Reaper));
+            CharacterInfos.AddCharacter("Mage", HType.ranger, typeof(Mage));
+            CharacterInfos.AddCharacter("Robin", HType.ranger, typeof(Robin));
+            CharacterInfos.AddCharacter("Zoro", HType.ranger, typeof(Zoro));
+            CharacterInfos.AddCharacter("Time", HType.ranger, typeof(Time));
+            CharacterInfos.AddCharacter("Dynamic", HType.ranger, typeof(Dynamic));
+            CharacterInfos.AddCharacter("Gravity", HType.ranger, typeof(Gravity));
+            CharacterInfos.AddCharacter("Sacrifice", HType.ranger, typeof(Sacrifice));
+            CharacterInfos.AddCharacter("Shard", HType.ranger, typeof(Shard));
+            CharacterInfos.AddCharacter("Raven", HType.ranger, typeof(Raven));
+            CharacterInfos.AddCharacter("Berserker", HType.ranger, typeof(Berserker));
+            CharacterInfos.AddCharacter("Rat", HType.ranger, typeof(Rat));
+            CharacterInfos.AddCharacter("Trap", HType.ranger, typeof(Trap));
 
             // warriors
             CharacterInfos.AddCharacter("Barrier", HType.warrior, typeof(Barrier));
@@ -164,45 +312,149 @@ namespace EffectOfWar
         public void StartOfGame()
         {
             // kaszt nerf
-            /*if (gamemode == GameMode.PvP)
+            if (gamemode == GameMode.PvP)
             {
-                float[] hPERdd = new float[3] { 1f, 0.66f, 0.33f };
-                float[] dt = new float[3] { 1f, 1.33f, 1.66f };
-                int healers = team1.Count(h=>h.type == HType.support)-1;
-                int rangers = team1.Count(h => h.type == HType.ranger)-1;
-                int warriors = team1.Count(h => h.type == HType.warrior)-1;
+                float[] HealerHealing = new float[3] { 1f, 0.66f, 0.33f };
+                float[] TankDMGResistance = new float[3] { 1f, 1.33f, 1.66f };
+                float[] RangerDamage = new float[3] { 2f, 1.66f, 1.33f };
+                int healers;
+                int rangers;
+                int warriors;
+                
+                healers = team1.Count(c => CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.support);
+                rangers = team1.Count(c => CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.ranger);
+                warriors = team1.Count(c => CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.warrior);
                 foreach (Character c in team1)
-                {
-                    if (c.type == HType.support) c.HealDealt = hPERdd[healers];
-                    else if (c.type == HType.ranger) c.DMGDealt = hPERdd[rangers];
-                    else c.DMGTaken = dt[warriors];
-                }
+                    if (CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.support) c.HealDealt = HealerHealing[healers-1];
+                    else if (CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.ranger) c.DMGDealt = RangerDamage[rangers-1];
+                    else if (CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.warrior) c.DMGResistance = TankDMGResistance[warriors-1];
 
-                healers = team2.Count(h => h.type == HType.support) - 1;
-                rangers = team2.Count(h => h.type == HType.ranger) - 1;
-                warriors = team2.Count(h => h.type == HType.warrior) - 1;
+                healers = team2.Count(c => CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.support);
+                rangers = team2.Count(c => CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.ranger);
+                warriors = team2.Count(c => CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.warrior);
                 foreach (Character c in team2)
-                {
-                    if (c.type == HType.support) c.HealDealt = hPERdd[healers];
-                    else if (c.type == HType.ranger) c.DMGDealt = hPERdd[rangers];
-                    else c.DMGTaken = dt[warriors];
-                }
-            }*/
+                    if (CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.support) c.HealDealt = HealerHealing[healers-1];
+                    else if (CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.ranger) c.DMGDealt = RangerDamage[rangers-1];
+                    else if (CharacterInfos.GetCharacterType(c.GetType().Name.ToString()) == HType.warrior) c.DMGResistance = TankDMGResistance[warriors-1];
+
+            }
 
             // Start of Game
-            foreach (Character c in team1)
+            for (int i = 0; i<team1.Count; i++)
             {
-                c.StartOfGame();
+                team1[i].Slot = (byte)i;
+                team1[i].StartOfGame();
             }
-            foreach (Character c in team2)
+            for (int i = 0; i < team2.Count; i++)
             {
-                c.StartOfGame();
+                team2[i].Slot = (byte)i;
+                team2[i].StartOfGame();
+            }
+            for (int i = 0; i < team1.Count; i++) team1[i].StartOfTurn();
+            editor.Offset(team1, Team.first);
+            editor.Offset(team2, Team.second, gamemode == GameMode.BossBattle);
+        }
+        internal void AddSkill(Team t, byte index, Skill s)
+        {
+            if (t==activeTeam)
+            {
+                if (mode)
+                {
+                    int size = t == Team.first ? team1.Count : team2.Count;
+                    bool talent = s == Skill.talent && !useSkills.Any(e => e != null && e.Item1 == index && e.Item2 == Skill.talent);
+                    bool skill = s != Skill.talent && (useSkills.Count(d => d!=null && d.Item2 != Skill.talent) < size);
+                    if (talent || skill)
+                    {
+                        int Aindex;
+                        try
+                        {
+                            Aindex = Array.LastIndexOf(useSkills, useSkills.Last(e => e != null)) + 1;
+                        }
+                        catch { Aindex = 0; }
+                        try { useSkills[Aindex] = new Tuple<byte, Skill>(index, s); }
+                        catch { }
+                    }
+                }
+                else
+                {
+                    int removeIndex = Array.FindLastIndex(
+                        useSkills,
+                        e => e != null &&
+                             e.Item1 == index &&
+                             e.Item2 == s);
+                    if (removeIndex != -1) useSkills[removeIndex] = null;
+                }
+                selectedSkills.Text = "";
+                foreach (var datas in useSkills)
+                    if (datas != null) selectedSkills.Text += $"{datas.Item1 + 1} karakter {datas.Item2} képesség\n";
             }
         }
-        internal void UseSkill(Team t, byte index, Skill s)
+        internal void TurnOff()
         {
-            List<Character> list = t==Team.first ? team1 : team2;
-            list[index].UseSkill(s);
+            for (int i = 0; i < useSkills.Length; i++) useSkills[i] = null;
+            selectedSkills.Text = "";
+        }
+        internal void UseSkills()
+        {
+            for (int i = 0; i < useSkills.Length; i++)
+            {
+                if (useSkills[i] != null)
+                {
+                    List<Character> team = activeTeam == Team.first ? team1 : team2;
+                    byte index = useSkills[i].Item1;
+                    Skill s = useSkills[i].Item2;
+                    InsertText($"{team[index].Name} {s} képesség");
+                    team[index].UseSkill(s);
+                }
+                useSkills[i] = null;
+            }
+            selectedSkills.Text = "";
+
+            if (activeTeam == Team.first)
+            {
+                activeTeam = Team.second;
+                team1.ForEach(t => t.EndOfTurn());
+                team2.ForEach(t => t.StartOfTurn());
+                if (gamemode==GameMode.BossBattle)
+                {
+                    activeTeam = Team.first;
+                    team2.ForEach(t => t.EndOfTurn());
+                    team1.ForEach(t => t.StartOfTurn());
+                }
+            }
+            else
+            {
+                activeTeam = Team.first;
+                team2.ForEach(t => t.EndOfTurn());
+                team1.ForEach(t => t.StartOfTurn());
+            }
+            editor.Offset(team1, Team.first);
+            editor.Offset(team2, Team.second, gamemode == GameMode.BossBattle);
+        }
+        internal void EditButtonState(object sender)
+        {
+            Button s = sender as Button;
+            if (mode)
+            {
+                s.Content = "Remove";
+                mode = false;
+            }  
+            else
+            {
+                s.Content = "Select";
+                mode = true;
+            }
+            
+        }
+        internal void CharacterDataInWarF(Team team, byte index)
+        {
+            Character c = team == Team.first ? team1[index] : team2[index];
+            CharacterDataInWar.Text = c.State();
+        }
+        internal void CharacterInfoInWar(Team team, byte index)
+        {
+            Character c = team == Team.first ? team1[index] : team2[index];
+            CharacterDataInWar.Text = c.ToString();
         }
     }
 
@@ -225,6 +477,34 @@ namespace EffectOfWar
             if (f < byte.MinValue) return byte.MinValue;
             if (f > byte.MaxValue) return byte.MaxValue;
             else return Convert.ToByte(f);
+        }
+
+        public static sbyte ConvertingToSbyte(float f)
+        {
+            if (f < sbyte.MinValue) return sbyte.MinValue;
+            if (f > sbyte.MaxValue) return sbyte.MaxValue;
+            else return Convert.ToSByte(f);
+        }
+    }
+
+    public static class Rnd
+    {
+        private static Random r = new Random();
+        public static int R(int max)
+        {
+            return r.Next(max);
+        }
+        public static int R(int min, int max)
+        {
+            return r.Next(min, max);
+        }
+        public static float R(float max)
+        {
+            return (float)(r.NextDouble() * max);
+        }
+        public static float R(float min, float max)
+        {
+            return (float)(r.NextDouble() * (max - min) + min);
         }
     }
 }

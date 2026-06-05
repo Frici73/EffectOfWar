@@ -65,7 +65,6 @@ namespace EffectOfWarLauncher
             this.Icon = icon;
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.Image = icon.ToBitmap();
-            notesBox.ReadOnly = true;
         }
 
         private async Task<bool> CheckVersion()
@@ -113,7 +112,7 @@ namespace EffectOfWarLauncher
 
                 haladas.Text = "Játék kicsomagolása";
                 ZipFile.ExtractToDirectory(zip, Path.Combine(exeFolder, "game"), true);
-
+                
                 haladas.Text = "Tisztíttás";
                 File.Delete(zip);
 

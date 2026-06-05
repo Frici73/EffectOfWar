@@ -7,16 +7,9 @@ using System.Collections.Specialized;
 
 namespace EffectOfWar
 {
-    /*public static class AllCharacter
-    {
-        internal static List<Character> supports = new List<Character>() { new Joker() };
-        internal static List<Character> rangers = new List<Character>() { new Lightning(), new Breaker(), new Reaper() };
-        internal static List<Character> warriors = new List<Character>() { new Barrier(), new Guardian(), new Bulldozer(), new Fulmare(), new ArthurKing(), new Trash(), new Afterglow(), new Cooldown(), new Frame(), new GodOfDeath(), new Smoke(), new Fortune_teller() };
-        internal static List<Boss> bosses = new List<Boss>() { new Chaos(), new Fate(), new Werewolf(), new Goblins(), new Vampire(), new Moon(), new Solmir(), new Tarantula() };
-    }*/
     public enum HType
     {
-        ranger, warrior, support, boss
+        warrior, ranger, support, boss
     }
     public enum ShiftMode
     {
@@ -52,10 +45,21 @@ namespace EffectOfWar
             return System.IO.Path.Combine(exeFolder, "Resources", keyS, name + ".png");
         }
 
+        internal static Tuple<string, string>? GetNameAndIMG(int index, HType htype)
+        {
+            if (Names.ContainsKey(htype) && index >= 0 && index < Names[htype].Count)
+            {
+                return new Tuple<string, string>(Names[htype][index], System.IO.Path.Combine(exeFolder, "Resources", htype.ToString(), Names[htype][index] + ".png"));
+            }
+            return null;
+        }
+
         internal static Character GetCharacter(string name) => (Character)Activator.CreateInstance(Types.First(x => x.Name == name));
 
         internal static HType GetCharacterType(string name) => Names.First(x => x.Value.Contains(name)).Key;
 
-        internal static string[] GetTypeList(HType htype) => Types.Where(x => Names[htype].Contains(x.Name.ToString())).Select(x => x.Name.ToString()).ToArray();
+        internal static string[] GetCharactersFromType(HType htype) => Types.Where(x => Names[htype].Contains(x.Name.ToString())).Select(x => x.Name.ToString()).ToArray();
+    
+        internal static int GetCharactersCountFromType(HType htype) => Names.ContainsKey(htype) ? Names[htype].Count : 0;
     }
 }

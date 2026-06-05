@@ -30,8 +30,6 @@
         {
             Starter = new Button();
             pictureBox1 = new PictureBox();
-            Selector = new ComboBox();
-            notesBox = new RichTextBox();
             Refresh = new Button();
             haladas = new Label();
             ready = new Button();
@@ -57,24 +55,6 @@
             pictureBox1.Size = new Size(175, 180);
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;
-            // 
-            // Selector
-            // 
-            Selector.FormattingEnabled = true;
-            Selector.Location = new Point(357, 15);
-            Selector.Margin = new Padding(3, 4, 3, 4);
-            Selector.Name = "Selector";
-            Selector.Size = new Size(268, 28);
-            Selector.TabIndex = 2;
-            // 
-            // notesBox
-            // 
-            notesBox.Location = new Point(357, 81);
-            notesBox.Margin = new Padding(3, 4, 3, 4);
-            notesBox.Name = "notesBox";
-            notesBox.Size = new Size(268, 406);
-            notesBox.TabIndex = 3;
-            notesBox.Text = "";
             // 
             // Refresh
             // 
@@ -115,8 +95,6 @@
             Controls.Add(ready);
             Controls.Add(haladas);
             Controls.Add(Refresh);
-            Controls.Add(notesBox);
-            Controls.Add(Selector);
             Controls.Add(pictureBox1);
             Controls.Add(Starter);
             Margin = new Padding(3, 4, 3, 4);
@@ -133,8 +111,6 @@
 
         private System.Windows.Forms.Button Starter;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.ComboBox Selector;
-        private System.Windows.Forms.RichTextBox notesBox;
         private System.Windows.Forms.Button Refresh;
         private Label haladas;
         private Button ready;

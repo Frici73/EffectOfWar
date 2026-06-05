@@ -1,4 +1,5 @@
-Két játék mód van: PvP és Boss Battle\nA PvP 3 a három ellen, még a Boss Battle 4 az 1 ellen (mindig a második csapatba kell helyezni a boss-t)
+Két játék mód van: PvP és Boss Battle
+A PvP 3 a három ellen, még a Boss Battle 4 az 1 ellen (mindig a második csapatba kell helyezni a boss-t)
 
 Egyes karakterek rendelkeznek Talent-tel, ezek a Talentek karakterenként egyedi hatással, cooldownal, stack limittel rendelkeznek, sőt néhány karakternél a játék elején 1 darab sincs betöltve.
 

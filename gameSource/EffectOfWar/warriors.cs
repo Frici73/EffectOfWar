@@ -64,7 +64,7 @@ namespace EffectOfWar
 
         public override void SkillTwo()
         {
-            EffectGroup tanky = new EffectGroup("Tanky", new Effect[] { Effect.taunt, Effect.dmgT }, new float[] { 0, 0.15f }, 3, true, true, this);
+            EffectGroup tanky = new EffectGroup("Tanky", new Effect[] { Effect.taunt, Effect.dmgR }, new float[] { 0, 0.15f }, 3, true, true, this);
             tanky.Give(this);
         }
     }
@@ -86,7 +86,7 @@ namespace EffectOfWar
         }
         public override void SkillTwo()
         {
-            EffectGroup tanky = new EffectGroup("Tanky", new Effect[] { Effect.taunt, Effect.dmgT }, new float[] { 0, 0.3f }, 1, true, true, this);
+            EffectGroup tanky = new EffectGroup("Tanky", new Effect[] { Effect.taunt, Effect.dmgR }, new float[] { 0, 0.3f }, 1, true, true, this);
             tanky.Give(this);
         }
         public override void EndOfTurn()
@@ -225,10 +225,10 @@ namespace EffectOfWar
             }
             else
             {
-                EffectGroup dmgtDec = new EffectGroup("Damage Reduction", Effect.dmgT, 0.15f, 2, true, true, this);
+                EffectGroup dmgRDec = new EffectGroup("Damage Reduction", Effect.dmgR, 0.15f, 2, true, true, this);
                 foreach (var c in GetCharacters(true, 4, true))
                 {
-                    dmgtDec.Give(c);
+                    dmgRDec.Give(c);
                 }
             }
         }
@@ -304,10 +304,10 @@ namespace EffectOfWar
     
         public override void SkillOne()
         {
-            EffectGroup dmgtDec = new EffectGroup("Damage Reduction", Effect.dmgT, 0.15f, 2, true, true, this);
+            EffectGroup dmgRDec = new EffectGroup("Damage Reduction", Effect.dmgR, 0.15f, 2, true, true, this);
             foreach (var c in GetCharacters(true, 4, true))
             {
-                dmgtDec.Give(c);
+                dmgRDec.Give(c);
             }
         }
 
@@ -399,7 +399,7 @@ namespace EffectOfWar
         }
         public override void AfterSelfGetDMG(Character attacker, DMG dmg, short taked)
         {
-            if (Random.Shared.NextDouble() < 0.15f*(Convert.ToByte(inc)+1))
+            if (Rnd.R(1f) < 0.15f*(Convert.ToByte(inc)+1))
             {
                 EffectGroup sleep = new EffectGroup("Sleep", Effect.sleep, 0, 1, false, false, this);
                 sleep.Give(attacker);

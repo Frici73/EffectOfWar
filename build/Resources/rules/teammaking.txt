@@ -1,0 +1,9 @@
+PvP-ben a csapatalkotás egy megfontolt folyamat.
+Helyt kell állni a csapatnak az ellenfél ellen, bírni kell a sok sérülést és nekünk sokat kell sebezni.
+Mivel a folyamatos heal vagy a végtelen sok HP nem egy fair dolog az ellenféllel szemben, ezért büntetve van, ha PvP-ben egy kasztból több hőst is választasz a csapatodba:
+
+Hatások:
+db			 1	 2	3
+healer (healing)		100%	66%	33%
+ranger (dmgDealt)	100%	66%	33%
+warrior (dmgTaken)	100%	133%	166%
