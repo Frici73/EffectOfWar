@@ -17,9 +17,6 @@ using System.Windows.Shapes;
 
 namespace EffectOfWar
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         internal Processing processing;
@@ -30,12 +27,13 @@ namespace EffectOfWar
         public MainWindow()
         {
             InitializeComponent();
-            processing = new Processing(ConsoleD, SelectedSkills, CharacterDataInWar);
-            editor = new UIEditor(team1UI, team2UI, processing);
-            processing.linkEditor(editor);
+            processing = new Processing(ConsoleD, SelectedSkills, CharacterDataInWar, this); // Háttér folyamatok
+            editor = new UIEditor(team1UI, team2UI, processing); // A BattleGround rajzolásért felel
+            processing.linkEditor(editor); // Hozzá kötjük az editor-t a háttérfolyamatokhoz, hogy onnan meghívható legyen a BattleGround rajzolása
 
-            if (!Directory.Exists(CharacterInfos.document)) Directory.CreateDirectory(CharacterInfos.document);
+            if (!Directory.Exists(CharacterInfos.document)) Directory.CreateDirectory(CharacterInfos.document); // Dokumentumok/EffectOfWar létrhozása
 
+            // egylb betöltés
             this.Icon = new BitmapImage(new Uri(System.IO.Path.Combine(Directory.GetParent(Directory.GetParent(CharacterInfos.exeFolder).ToString()).ToString(), "icon.ico")));
             this.Loaded += Window_Loaded;
             GamemodeB.Content = $"Gamemode: {processing.gamemode.ToString()}";
@@ -43,28 +41,29 @@ namespace EffectOfWar
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            processing.characterinfosfill();
+            processing.characterinfosfill(); // feltöltjük a karakter adatokat a CharacterInfos osztályba
             // menu
             Menu.Width = this.Width;
             Menu.Height = this.Height;
             Menu.Background = Brushes.LightGray;
             BasicStatShower.IsReadOnly = true;
             Menu.IsVisibleChanged += (s, e) => ListboxsEdit();
-            ListboxsEdit();
+            ListboxsEdit(); // Listbox-ok feltöltése
             Menu.RowDefinitions[0].Height = new GridLength(Menu.Height * 0.7);
 
-            // battleground
+            // battleground és az alap gombok 
             Battleground.Width = this.Width;
             Battleground.Height = this.Height;
             FireB.Click += new RoutedEventHandler((e, s) => processing.UseSkills());
             SkillUseFuncB.Click += new RoutedEventHandler((e, s) => processing.EditButtonState(SkillUseFuncB));
 
-            // InfosG
+            // InfosG a szabályok két oszlopa
             InfosG.ColumnDefinitions.Add(new ColumnDefinition());
             InfosG.ColumnDefinitions.Add(new ColumnDefinition());
         }
         private void ListboxsEdit()
         {
+            // kitörli a Menu tartalmát, ha az nem látható
             if (Menu.Visibility != Visibility.Visible)
             {
                 for (int i = 0; i < ListboxsPlace.Length; i++)
@@ -77,11 +76,12 @@ namespace EffectOfWar
                     }
                 }
             }
+            // rekonstruálja a Menu tartalmát, ha láthatóvá válik
             else
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    HType CharType = (HType)i;
+                    HType CharType = (HType)i; // végig megy a karakter típusokon
                     ListboxsPlace[i] = new Grid()
                     {
                         ColumnDefinitions = { new ColumnDefinition(), new ColumnDefinition() { Width = new GridLength(0.1, GridUnitType.Star) } },
@@ -120,8 +120,7 @@ namespace EffectOfWar
                 }
             }
         }
-
-        public void ScrollList(object sender)
+        public void ScrollList(object sender) // Megkeressük, hogy melyik karakter lista lett görgetve, a scrollbar és a listbox fölött lévő textboc tartalma alapján, utána töröljük a képeket és újra töltjük a szükséges 4 képet
         {
             ScrollBar bar = (ScrollBar)sender;
             ListBox? box = ListboxsPlace?.FirstOrDefault(g => g.Children.Contains(bar))?.Children.OfType<ListBox>().FirstOrDefault();
@@ -168,7 +167,7 @@ namespace EffectOfWar
                 else break;
             }
         }
-        public async void ItemSelect(object sender, SelectionChangedEventArgs e)
+        public async void ItemSelect(object sender, SelectionChangedEventArgs e) // megkeressük a listát és a benne lévő választott elemet, majd újra írjuk a csapattagok kiírt nevét a frissített lista alapján, majd töröljük a választást
         {
             ListBox listBox = sender as ListBox;
 
@@ -193,15 +192,13 @@ namespace EffectOfWar
                 listBox.UnselectAll();
             }
         }
-
-
         public async void ChangeGamemode(object sender, RoutedEventArgs e)
         {
             processing.Change();
             GamemodeB.Content = $"Gamemode: {processing.gamemode.ToString()}";
             firstShower.Content = "Csapat 1: ";
             secondShower.Content = "Csapat 2: ";
-        }
+        } // játékomód váltása
         public async void StartGame(object sender, RoutedEventArgs e)
         {
             if (processing.Correct())
@@ -211,14 +208,14 @@ namespace EffectOfWar
                 editor.Create(processing.team1, processing.team2, processing.gamemode);
                 processing.StartOfGame();
             }
-        }
-        private void Close_Click(object sender, RoutedEventArgs e) => Close();
-        private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+        } // Ha a Processing szerint jó a csapat összeállítás akkor Menu bezárás és BattleGround megjelenítés
+        private void Close_Click(object sender, RoutedEventArgs e) => Close(); // ablak bezárása
+        private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized; // tálcázás
         private void ConsoleVis(object sender, RoutedEventArgs e)
         {
             if (ConsoleD.Visibility == Visibility.Visible) ConsoleD.Visibility = Visibility.Collapsed;
             else ConsoleD.Visibility = Visibility.Visible;
-        }
+        } // A konzol megjelenítése (ha BattleGround látszik)
         private void ShowDatas(object sender, RoutedEventArgs e)
         {
             if (InfosG.Visibility == Visibility.Visible)
@@ -258,6 +255,12 @@ namespace EffectOfWar
             Button btn = sender as Button;
             Tuple<RowDefinition, Button, string> DataDuo = txts.First(d => d.Item2 == btn);
             ruleBox.Text = File.ReadAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "rules", DataDuo.Item3));
+        }
+        internal void EndOfBattle()
+        {
+            Menu.Visibility = Visibility.Visible;
+            Battleground.Visibility = Visibility.Collapsed;
+            ListboxsEdit();
         }
     }
 
@@ -488,8 +491,8 @@ namespace EffectOfWar
 
     internal class UIEditor
     {
-        private CharacterUI?[] team1UI = new CharacterUI?[5];
-        private CharacterUI?[] team2UI = new CharacterUI?[6];
+        List<CharacterUI?> team1UI= new List<CharacterUI?>();
+        List<CharacterUI?> team2UI = new List<CharacterUI?>();
         private Grid team1G;
         private Grid team2G;
         private Processing link;
@@ -519,11 +522,12 @@ namespace EffectOfWar
 
         public void Offset(List<Character> chars, Team team, bool hide = false)
         {
-            CharacterUI[] ui = team == Team.first ? team1UI : team2UI;
+            List<CharacterUI> ui = team == Team.first ? team1UI : team2UI;
             Grid grid = team == Team.first ? team1G : team2G;
             Config(grid, (byte)chars.Count);
-            for (int i = 0; i < ui.Length; i++)
+            for (int i = 0; i < 10; i++)
             {
+                if (ui.Count - 1 < i) ui.Add(null);
                 if (i >= chars.Count) ui[i] = null;
                 else if (i < chars.Count && ui[i] == null) ui[i] = new CharacterUI((byte)i, grid, team, link);
                 if (ui[i] != null)
@@ -545,5 +549,4 @@ namespace EffectOfWar
             Offset(team2, Team.second, gm == GameMode.BossBattle);
         }
     }
-
 }

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EffectOfWar
 {
-    // Warriors
     class Barrier : Character
     {
+         
         public Barrier()
         {
             Name = "Barrier";
@@ -37,6 +38,7 @@ namespace EffectOfWar
 
     class Guardian : Character
     {
+         
         public Guardian()
         {
             Name = "Guardian";
@@ -71,6 +73,7 @@ namespace EffectOfWar
 
     class Bulldozer : Character
     {
+         
         public Bulldozer()
         {
             Name = "Bulldozer";
@@ -99,6 +102,7 @@ namespace EffectOfWar
 
     class Emerald : Character
     {
+         
         public Emerald()
         {
             Name = "Emerald";
@@ -146,6 +150,7 @@ namespace EffectOfWar
 
     class ArthurKing : Character
     {
+         
         public ArthurKing()
         {
             Name = "Arthur King";
@@ -176,6 +181,7 @@ namespace EffectOfWar
 
     class Phase : Character
     {
+         
         public Phase()
         {
             Name = "Phase";
@@ -241,6 +247,7 @@ namespace EffectOfWar
 
     class Fulmare : Character
     {
+         
         public Fulmare()
         {
             Name = "Fulmare";
@@ -277,6 +284,7 @@ namespace EffectOfWar
 
     class Trash : Character
     {
+         
         public Trash()
         {
             Name = "Trash";
@@ -323,6 +331,7 @@ namespace EffectOfWar
 
     class Afterglow : Character
     {
+         
         public Afterglow()
         {
             Name = "Afterglow";
@@ -359,6 +368,7 @@ namespace EffectOfWar
 
     class Cooldown : Character
     {
+         
         bool inc;
         byte incCooldown;
         public Cooldown()
@@ -409,6 +419,7 @@ namespace EffectOfWar
 
     class Frame : Character
     {
+         
         bool? skillUsed = null; // false = skill1 | true = skill2
         public Frame()
         { 
@@ -443,6 +454,7 @@ namespace EffectOfWar
 
     class GodOfDeath : Character
     {
+         
         public GodOfDeath()
         {
             Name = "God of Death";
@@ -474,6 +486,7 @@ namespace EffectOfWar
 
     class Smoke : Character
     {
+         
         public Smoke()
         {
             Name = "Smoke";
@@ -500,9 +513,10 @@ namespace EffectOfWar
         }
     }
 
-    class Fortune_teller : Character
+    class Fortuneteller : Character
     {
-        public Fortune_teller()
+         
+        public Fortuneteller()
         {
             Name = "Fortune-teller";
             S1T = "Tauntol 2 körig (nem törölhető) és kap 10%-os Reflect-et 2 körig";
@@ -530,6 +544,76 @@ namespace EffectOfWar
         {
             EffectGroup e = new EffectGroup("DMG dealt increase", Effect.dmgD, 0.07f, 3, true, true, this);
             foreach (Character teammate in GetCharacters(true, 4, true)) e.Give(teammate);
+        }
+    }
+
+    class Szunvukung : Character
+    {
+        bool clone = false;
+        public Szunvukung() : this(false) { }
+        public Szunvukung(bool clone)
+        {
+            Name = "Szun-Vu Kung";
+            this.clone = clone;
+            short hp;
+            if (!clone)
+            {
+                S1T = "Tauntol 2 körig és 100% F erővel támad meg egy ellenfelet (ha van klón akkor az tauntol és minden klón 75% f erővel támad)";
+                S2T = "";
+                SpecialT = "Ha sebeznek a klónjai akkor ő sérül a sebzés 50%-ával";
+                TalentT = "Leidéz max 2 klónt (stack függő) mindegyik után sérül 3% maxhp-t. cooldown 2, stack 2, kezdő stack 1. (a klónok 50 hp-val rendelkeznek";
+                talent = new Talent(this, 2, 2, 1);
+                hp = 380;
+            }
+            else hp = 50;
+            init(hp, 15, 4, 3, 3, 0.75f, 0.75f, 0.85f, 1.2f);
+        }
+
+        public override void Talent()
+        {
+            int count = talent.TalentStack[0] + 1;
+            talent.TalentStack[0] = 0;
+            for (int i = 0; i < count; i++)
+                link.AddClone(new Szunvukung(true), link.GetTeam(this));
+            DMG dmg = new DMG(MaxHitpoints[0] * 0.03f * count);
+            Defense(this, dmg);
+        }
+
+        public override void SkillOne()
+        {
+            if (!clone)
+            {
+                List<Character> kung = GetCharacters(true, -1, true).ToList();
+                kung.RemoveAll(c => c.Name != this.Name);
+                EffectGroup e = new EffectGroup("Taunt", Effect.taunt, 0, 2, true, false, this);
+                Szunvukung? clone = (Szunvukung)kung.FirstOrDefault(c =>
+                {
+                    Szunvukung k = (Szunvukung)c;
+                    return k.clone;
+                });
+                e.Give(clone==null?this:clone, true);
+                DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0], Punctual[0], DMGDealt, AttackType.Skill);
+                GetCharacters(false, 1)[0].Defense(this, dmg);
+                kung.ForEach(c =>
+                {
+                    Szunvukung k = (Szunvukung)c;
+                    if (k.clone) k.SkillOne();
+                });
+            }
+            else
+            {
+                DMG dmg = new DMG(DMGType.physical, PhysicalAttack[0] * 0.75f, Punctual[0], DMGDealt, AttackType.Skill);
+                DMG tooriginal = new DMG(GetCharacters(false, 1)[0].Defense(this, dmg)[0]*0.5f);
+                GetCharacters(true, -1, true).First(c =>
+                {
+                    if (c.Name == this.Name)
+                    {
+                        Szunvukung k = (Szunvukung)c;
+                        return k.clone;
+                    }
+                    else return false;
+                }).Defense(this, tooriginal);
+            }
         }
     }
 }

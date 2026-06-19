@@ -11,6 +11,7 @@ namespace EffectOfWar
 {
     class Lightning : Character
     {
+         
         public Lightning() 
         {
             Name = "Lightning";
@@ -44,6 +45,7 @@ namespace EffectOfWar
 
     class Breaker : Character
     {
+         
         byte count = 0;
         public Breaker() 
         {
@@ -86,6 +88,7 @@ namespace EffectOfWar
 
     class Reaper : Character
     {
+         
         Character? selected;
         public Reaper() 
         {
@@ -126,6 +129,7 @@ namespace EffectOfWar
 
     class Mage : Character
     {
+         
         ushort inc;
         public Mage()
         {
@@ -165,6 +169,7 @@ namespace EffectOfWar
 
     class Robin : Character
     {
+         
         public Robin()
         {
             Name = "Robin";
@@ -223,6 +228,7 @@ namespace EffectOfWar
 
     class Zoro : Character
     {
+         
         public Zoro() 
         {
             Name = "Zoro";
@@ -265,6 +271,7 @@ namespace EffectOfWar
 
     class Time : Character
     {
+         
         Character? selected;
         bool attack = false;
         public Time()
@@ -307,6 +314,7 @@ namespace EffectOfWar
 
     class Dynamic : Character
     {
+         
         public Dynamic()
         {
             Name = "Dynamic";
@@ -375,11 +383,12 @@ namespace EffectOfWar
 
     class Gravity : Character
     {
+         
         public Gravity()
         {
             Name = "Gravity";
             S1T = "Kioszt minden ellenfélnek 3%-os Fall DoT hatást 3 körig";
-            S2T = "Megtámad 1 ellenfelet a célpont maxéletének 5%-ával (fizikailag)";
+            S2T = "Megtámad 1 ellenfelet a célpont maxéletének 1%-ával (fizikailag)";
             SpecialT = "Minden képesség használat előtt kioszt 1 Weight jelölőt 1 csapattagnak, ha önmagának akkor azonnal törli és gyógyul minden aktív Weight jelölő után 75% F erővel és a többi kiosztott Weight jelölőt is törli (a hatásukat megadja)";
             init(270, 10, 3, 7, 5, 1, 1, 1, 1.5f);
             OwnMarker = new Marker[]
@@ -419,13 +428,14 @@ namespace EffectOfWar
         public override void SkillTwo()
         {
             Character enemy = GetCharacters(false, 1)[0];
-            DMG dmg = new DMG(DMGType.physical, enemy.MaxHitpoints[0] * 0.05f, Punctual[0], DMGDealt, AttackType.Skill);
+            DMG dmg = new DMG(DMGType.physical, enemy.MaxHitpoints[0] * 0.01f, Punctual[0], DMGDealt, AttackType.Skill);
             enemy.Defense(this, dmg);
         }
     }
 
     class Sacrifice : Character
     {
+         
         public Sacrifice()
         {
             Name = "Sacrifice";
@@ -481,6 +491,7 @@ namespace EffectOfWar
 
     class Shard : Character
     {
+         
         public Shard()
         {
             Name = "Shard";
@@ -520,6 +531,7 @@ namespace EffectOfWar
 
     class Raven : Character
     {
+         
         public Raven()
         {
             Name = "Raven";
@@ -560,6 +572,7 @@ namespace EffectOfWar
 
     class Berserker : Character
     {
+         
         byte lastmodifier = 0;
         public Berserker()
         {
@@ -600,6 +613,7 @@ namespace EffectOfWar
 
     class Rat : Character
     {
+         
         public Rat() 
         {
             Name = "Rat";
@@ -646,6 +660,7 @@ namespace EffectOfWar
 
     class Trap : Character
     {
+         
         public Trap() 
         {
             Name = "Trap";

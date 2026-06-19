@@ -13,11 +13,6 @@ using System.Xml.Linq;
 
 namespace EffectOfWar
 {
-
-    public enum TargetingMode
-    {
-        normal, lowestHp, highestHp, lowestHpPercent, highestHpPercent, random
-    }
     public abstract class EffectsBasic
     {
         public string name { get; protected set; }
@@ -29,10 +24,7 @@ namespace EffectOfWar
         public abstract void EndOfTurn(Character c);
 
     }
-    public enum Effect
-    {
-        allstat, maxhp, matk, patk, mdef, pdef, simmun, punctual, manasens, mknow, reg, dmgD, dmgR, debuffImmun, buffImmun, HoTImmun, DoTImmun, taunt, hpDrop, reincarnation, absoluteOne, sleep, Untouchable
-    }
+    
     public class EffectGroup : EffectsBasic
     {
         private Effect[] effects;
@@ -234,10 +226,6 @@ namespace EffectOfWar
         public float GetValue(Effect e) => values[Array.IndexOf(effects, e)];
     }
 
-    public enum OverTimeType
-    {
-        Bleeding, Explosion, Fall, Poison, Lifesteal, ManaCharge, OverRegenerate, Recover
-    }
     public class OverTime : EffectsBasic
     {
         public float val { get; private set; }
@@ -527,10 +515,6 @@ namespace EffectOfWar
         }
     }
 
-    public enum HealingType
-    {
-        reg, magic, physi, none, both
-    }
     public class Healing
     {
         public HealingType type = HealingType.none;
@@ -553,14 +537,6 @@ namespace EffectOfWar
         }
     }
 
-    public enum DMGType
-    {
-        magical, physical, both, none
-    }
-    public enum AttackType
-    {
-        Skill, Counter, Reflect
-    }
     public class DMG
     {
         public AttackType atktype = AttackType.Skill;
@@ -630,19 +606,21 @@ namespace EffectOfWar
         {
             character = master;
         }
-        public Talent(Character master, sbyte cooldown, byte stack)
+        public Talent(Character master, sbyte cooldown, byte stack, byte startstack=0)
         {
             character = master;
             TalentCooldown[1] = cooldown;
             TalentStack[1] = stack;
+            TalentStack[0] = startstack;
+            if (startstack < stack) TalentCooldown[0] = TalentCooldown[1];
         }
 
         public void Activate()
         {
-            if (TalentStack[0] > Converter.ConvertingToByte(0))
+            if (TalentStack[0] > 0)
             {
                 character.link.InsertText($"{character.Name} Talent aktiválása:");
-                TalentStack[0] -= Converter.ConvertingToByte(1);
+                TalentStack[0] -= 1;
                 character.Talent();
                 if (TalentCooldown[0] == 0) TalentCooldown[0] = TalentCooldown[1];
             }

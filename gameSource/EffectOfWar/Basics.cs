@@ -28,8 +28,8 @@ namespace EffectOfWar
         public Processing link;
         public byte teamID = 0;
         public byte Slot = 0;  // 0, 1, 2, 3
-        public float DMGDealt = 2;
-        public float DMGResistance = 1;
+        public float DMGDealt = 20;
+        public float DMGResistance = 10;
         public float HealDealt = 1;
         public float regeneration = 0.01f;
         public List<short> LostedHitpointsInRounds = new List<short>() { 0 };
@@ -87,6 +87,9 @@ namespace EffectOfWar
         public byte KillCount = 0;
 
         // functions
+        /*public override bool Equals(object? obj) => ReferenceEquals(this, obj);
+        public static bool operator ==(Character a, Character b) => a.Equals(b);
+        public static bool operator !=(Character a, Character b) => !a.Equals(b);*/
 
         public override string ToString()
         {
@@ -105,12 +108,14 @@ namespace EffectOfWar
         }
         public string State()
         {
-            string Text = $"{Name}:\nHP: {Hitpoints[0]} / {MaxHitpoints[0]} - {((float)Hitpoints[0] / (float)MaxHitpoints[0]*100):F2}%\n" +
+            string Text = $"{Name}:\nHP: {Hitpoints[0]} / {MaxHitpoints[0]} - {((float)Hitpoints[0] / (float)MaxHitpoints[0] * 100):F2}%\n" +
                 $"Shield: {shield[0] + shield[1]}\n" +
                 $"Effects: {(effects.Count > 0 ? string.Join(", ", effects.Select(e => e.name)) : "None")}\n" +
                 $"DoTs: {(DoTs.Count > 0 ? string.Join(", ", DoTs.Select(e => e.name)) : "None")}\n" +
                 $"HoTs: {(HoTs.Count > 0 ? string.Join(", ", HoTs.Select(e => e.name)) : "None")}\n" +
-                $"Markers: {(Markers.Count > 0 ? string.Join(", ", Markers.Select(e => e.name)) : "None")}\n";
+                $"Markers: {(Markers.Count > 0 ? string.Join(", ", Markers.Select(e => e.name)) : "None")}\n" +
+                $"Talent: {(talent == null ? "None" : talent.TalentStack[0].ToString() + '/' + talent.TalentStack[1].ToString() + " cooldown: " + talent.TalentCooldown[0].ToString() + '/' + talent.TalentCooldown[1].ToString())}\n" +
+                $"Charge: {(charge==null?"None": charge.State[0].ToString() + '/' + charge.State[1].ToString())}";
 
             return Text;
         }
@@ -147,15 +152,18 @@ namespace EffectOfWar
         }
         public virtual void SpecialTechnique(object arg) { }
         public virtual void SpecialTechnique() { }
-        public virtual Character Clone()
-        {
+        public virtual Character Clone() => (Character)Activator.CreateInstance(this.GetType());
+        /*{
+            
             Character clone = (Character)this.MemberwiseClone();
-
+            clone.link = default(Processing);
             // 🔥 ÚJ LISTÁK (kritikus)
             clone.effects = new List<EffectGroup>();
             clone.DoTs = new List<OverTime>();
             clone.HoTs = new List<OverTime>();
             clone.Markers = new List<Marker>();
+            clone.counter = new Counter(clone);
+            clone.reflect = new Reflect(clone);
 
             clone.LostedHitpointsInRounds = LostedHitpointsInRounds.ToList();
 
@@ -182,11 +190,11 @@ namespace EffectOfWar
             clone.shield = (ushort[])shield.Clone();
 
             // ⚠️ Ezek külön objektumok → ha van bennük state, klónozni kell
-            clone.counter = new Counter(clone);
-            clone.reflect = new Reflect(clone);
+            if (charge != default(Charge)) clone.charge = new Charge(clone, charge.State[1]);
+            if (TalentT != "") clone.talent = new Talent(clone, talent.TalentCooldown[1], talent.TalentStack[1]);
 
             return clone;
-        }
+        }*/
 
         // skilluse
         public virtual void BeforeSkillUse(Skill used) { }

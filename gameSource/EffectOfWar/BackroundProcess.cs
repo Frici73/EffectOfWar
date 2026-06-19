@@ -12,22 +12,6 @@ using System.Windows.Navigation;
 
 namespace EffectOfWar
 {
-    public enum Team
-    {
-        first, second
-    }
-    public enum GameMode
-    {
-        BossBattle, PvP
-    }
-    enum Direction
-    {
-        up, down
-    }
-    public enum Operator
-    {
-        plus, minusz, divide, multiplication
-    }
     public class Processing
     {
         public List<Character> team1 { get; private set; }
@@ -44,8 +28,9 @@ namespace EffectOfWar
         private TextBox selectedSkills;
         private TextBox CharacterDataInWar;
         private UIEditor editor;
+        private MainWindow w;
 
-        public Processing(TextBox tb, TextBox tb2, TextBox tb3)
+        public Processing(TextBox tb, TextBox tb2, TextBox tb3, MainWindow w)
         {
             team1 = new List<Character>();
             team2 = new List<Character>();
@@ -54,11 +39,9 @@ namespace EffectOfWar
             Console = tb;
             selectedSkills = tb2;
             CharacterDataInWar = tb3;
+            this.w = w;
         }
-        internal void linkEditor(UIEditor e)
-        {
-            editor = e;
-        }
+        internal void linkEditor(UIEditor e) => editor = e;
         internal void Change()
         {
             if (gamemode == GameMode.PvP) gamemode = GameMode.BossBattle;
@@ -98,10 +81,18 @@ namespace EffectOfWar
 
         internal void AddClone(Character c, Team team)
         {
-            Character clone = c.Clone();
-            if (team == Team.first) team1.Add(clone);
-            else team2.Add(clone);
-            clone.TeamChange(team, this);
+            //Character clone = c.Clone();
+            if (team == Team.first)
+            {
+                team1.Add(c);
+                c.Slot = (byte)(team1.Count - 1);
+            }
+            else 
+            {
+                team2.Add(c);
+                c.Slot = (byte)(team1.Count - 1);
+            }
+            c.TeamChange(team, this);
         }
         
         internal void EditSlot(Team team, Direction dir, byte index)
@@ -267,6 +258,20 @@ namespace EffectOfWar
         {
             // supports
             CharacterInfos.AddCharacter("Joker", HType.support, typeof(Joker));
+            CharacterInfos.AddCharacter("Doctor", HType.support, typeof(Doctor));
+            CharacterInfos.AddCharacter("Virus", HType.support, typeof(Virus));
+            CharacterInfos.AddCharacter("Alchemist", HType.support, typeof(Alchemist));
+            CharacterInfos.AddCharacter("Merlin", HType.support, typeof(Merlin));
+            CharacterInfos.AddCharacter("Garden", HType.support, typeof(Garden));
+            CharacterInfos.AddCharacter("Feather", HType.support, typeof(Feather));
+            CharacterInfos.AddCharacter("Connection", HType.support, typeof(Connection));
+            CharacterInfos.AddCharacter("Eternal", HType.support, typeof(Eternal));
+            CharacterInfos.AddCharacter("Snake", HType.support, typeof(Snake));
+            CharacterInfos.AddCharacter("Grandmother", HType.support, typeof(Grandmother));
+            CharacterInfos.AddCharacter("Equality", HType.support, typeof(Equality));
+            CharacterInfos.AddCharacter("Collect", HType.support, typeof(Collect));
+            CharacterInfos.AddCharacter("Further", HType.support, typeof(Further));
+            CharacterInfos.AddCharacter("Reverse", HType.support, typeof(Reverse));
 
             // rangers
             CharacterInfos.AddCharacter("Lightning", HType.ranger, typeof(Lightning));
@@ -297,7 +302,10 @@ namespace EffectOfWar
             CharacterInfos.AddCharacter("Frame", HType.warrior, typeof(Frame));
             CharacterInfos.AddCharacter("GodOfDeath", HType.warrior, typeof(GodOfDeath));
             CharacterInfos.AddCharacter("Smoke", HType.warrior, typeof(Smoke));
-            CharacterInfos.AddCharacter("Fortune_teller", HType.warrior, typeof(Fortune_teller));
+            CharacterInfos.AddCharacter("Fortuneteller", HType.warrior, typeof(Fortuneteller));
+            CharacterInfos.AddCharacter("Szunvukung", HType.warrior, typeof(Szunvukung));
+            CharacterInfos.AddCharacter("Emerald", HType.warrior, typeof(Emerald));
+            CharacterInfos.AddCharacter("Phase", HType.warrior, typeof(Phase));
 
             // bosses
             CharacterInfos.AddCharacter("Chaos", HType.boss, typeof(Chaos));
@@ -314,9 +322,9 @@ namespace EffectOfWar
             // kaszt nerf
             if (gamemode == GameMode.PvP)
             {
-                float[] HealerHealing = new float[3] { 1f, 0.66f, 0.33f };
-                float[] TankDMGResistance = new float[3] { 1f, 1.33f, 1.66f };
-                float[] RangerDamage = new float[3] { 2f, 1.66f, 1.33f };
+                float[] HealerHealing = new float[3] { 10f, 6.6f, 3.3f };
+                float[] TankDMGResistance = new float[3] { 10f, 6.6f, 3.3f };
+                float[] RangerDamage = new float[3] { 20f, 16.6f, 13.3f };
                 int healers;
                 int rangers;
                 int warriors;
@@ -394,6 +402,31 @@ namespace EffectOfWar
             for (int i = 0; i < useSkills.Length; i++) useSkills[i] = null;
             selectedSkills.Text = "";
         }
+        private void winner()
+        {
+            string num = team1.Count == 0 ? "2" : "1";
+            MessageBox.Show($"{num}. Játékos nyert");
+            w.EndOfBattle();
+        }
+        private void turnswitch(Team newActive)
+        {
+            List<Character> end;
+            List<Character> start;
+            if (newActive == Team.first)
+            {
+                start = team1;
+                end = team2;
+            }
+            else
+            {
+                start = team2;
+                end = team1;
+            }
+            for (int i = start.Count - 1; i >= 0; i--) start[i].StartOfTurn();
+            for (int i = end.Count - 1; i >= 0; i--) end[i].EndOfTurn();
+            if (team1.Count == 0 || team2.Count == 0) winner();
+            
+        }
         internal void UseSkills()
         {
             for (int i = 0; i < useSkills.Length; i++)
@@ -413,20 +446,18 @@ namespace EffectOfWar
             if (activeTeam == Team.first)
             {
                 activeTeam = Team.second;
-                team1.ForEach(t => t.EndOfTurn());
-                team2.ForEach(t => t.StartOfTurn());
+                turnswitch(activeTeam);
+                
                 if (gamemode==GameMode.BossBattle)
                 {
                     activeTeam = Team.first;
-                    team2.ForEach(t => t.EndOfTurn());
-                    team1.ForEach(t => t.StartOfTurn());
+                    turnswitch(activeTeam);
                 }
             }
             else
             {
                 activeTeam = Team.first;
-                team2.ForEach(t => t.EndOfTurn());
-                team1.ForEach(t => t.StartOfTurn());
+                turnswitch(activeTeam);
             }
             editor.Offset(team1, Team.first);
             editor.Offset(team2, Team.second, gamemode == GameMode.BossBattle);
@@ -456,6 +487,50 @@ namespace EffectOfWar
             Character c = team == Team.first ? team1[index] : team2[index];
             CharacterDataInWar.Text = c.ToString();
         }
+    }
+
+    public static class CharacterInfos
+    {
+        internal static string exeFolder = AppDomain.CurrentDomain.BaseDirectory;
+        internal static string document = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "EffectOfWar");
+        private static Dictionary<HType, List<string>> Names = new Dictionary<HType, List<string>>() { { HType.ranger, new List<string>() }, { HType.warrior, new List<string>() }, { HType.support, new List<string>() }, { HType.boss, new List<string>() } };
+        private static List<Type> Types = new List<Type>();
+
+        public static void AddCharacter(string pathORname, HType htype, Type type)
+        {
+            if (typeof(Character).IsAssignableFrom(type))
+            {
+                if (pathORname.EndsWith(".png") || pathORname.EndsWith(".txt")) Names[htype].Add(pathORname.Substring(0, pathORname.Length - 4));
+                else Names[htype].Add(pathORname);
+                Types.Add(type);
+            }
+        }
+
+        public static string img(string name, HType? htype = null)
+        {
+            string keyS = "";
+            if (htype.HasValue && Names.ContainsKey(htype.Value) && Names[htype.Value].Contains(name)) keyS = htype.Value.ToString();
+            else
+                foreach (var key in Names.Keys) if (Names[key].Contains(name)) keyS = key.ToString();
+            return System.IO.Path.Combine(exeFolder, "Resources", keyS, name + ".png");
+        }
+
+        internal static Tuple<string, string>? GetNameAndIMG(int index, HType htype)
+        {
+            if (Names.ContainsKey(htype) && index >= 0 && index < Names[htype].Count)
+            {
+                return new Tuple<string, string>(Names[htype][index], System.IO.Path.Combine(exeFolder, "Resources", htype.ToString(), Names[htype][index] + ".png"));
+            }
+            return null;
+        }
+
+        internal static Character GetCharacter(string name) => (Character)Activator.CreateInstance(Types.First(x => x.Name == name));
+
+        internal static HType GetCharacterType(string name) => Names.First(x => x.Value.Contains(name)).Key;
+
+        internal static string[] GetCharactersFromType(HType htype) => Types.Where(x => Names[htype].Contains(x.Name.ToString())).Select(x => x.Name.ToString()).ToArray();
+
+        internal static int GetCharactersCountFromType(HType htype) => Names.ContainsKey(htype) ? Names[htype].Count : 0;
     }
 
     public static class Converter
