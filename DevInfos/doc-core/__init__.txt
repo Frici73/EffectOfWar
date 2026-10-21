@@ -1,0 +1,2 @@
+sys._MEIPASS - egy olyan változó mely .exe-vé buildelt fájlok után van és a beépített fájlokhoz ad útvonalat
+BASEPATH exe esetén _MEIPASS, py esetén a modul feletti mappa

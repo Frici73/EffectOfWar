@@ -1,0 +1,27 @@
+A Target system működése több részből áll és ezeknek meg van a hierarchiájuk.
+
+TAUNT, ez egy olyan effect amit egyes karakterek képesek adni, ilyenkor a karakterek ezt az effectet hordozó karaktert célozzák (alapértelmezetten csak támadáskor).
+Amennyiben több karakteren is van Taunt a lejjebb megismerhető helyezkedési szabály fog dönteni a Taunt-ot hordozó karakterek közül.
+
+HELYEZKEDÉS, ez egyszerűen működik, fentről lefelé amilyen sorrendben vannak a karakterek olyan sorrendben lövöd / gyógyítod meg őket, ezt felülírhatja a korábban leírt Taunt és a lejjebb megismerhető Focused.
+
+FOCUSED, ez egy nagyon alacsony prioritású rendszer, ha nincs taunt csak akkor működik és akkor sem teljes lefedetséget biztosít.
+Ennek a célja, hogy taunt hiányában felülírd a helyezkedés rendszert (támadás és gyógyítás esetében is), de csak egy célpontot tud választani, így Multi Target esetén egy fix célpont van ebből!
+Egyes karakterek a focused attack-ot jutalmazzák például több sebzéssel. Ez a rendszer ugyanakkor veszélyes is! Amennyiben a célpont meghal mielőtt a Focused Attack érné akkor nem lesz új target a helyére!
+Képes felülírni a SKILL EFFECTS-ből származó target sorrendet!
+
+SKILL EFFECTS, egyes karaktereknek vannak olyan képességei amik más logika alapján választanak célpontot, például legalacsonyabb életű ellenfél.
+Ez egy olyan célpont választási logika, melyet felülírhat a taunt. Amennyiben a logika nem tud választani két (/ több) karakter közül akkor a Focused Attack dönt, ha az nincs akkor a helyezkedés
+
+SINGLE TARGET ATTACKS VS MULTI TARGET ATTACKS
+A célpontok számát határozza meg!
+A single target működése teljesen leírt a feljebbi Target System-mel.
+A multi target annyi változást hoz, hogy a taunt miatt az egy célpont lesz az összes célpont, 
+amennyiben a támadás nem ér véget a taunt-t hordozó célpont halálával akkor a támadás megszakad!
+A focused attack multi target esetén csak az egyik célpontot választja ki, így a másik (/ többi) célpont a helyezkedés rendszer alapján lesz továbbra is kiválasztva!
+
+SINGLE HIT ATTACKS VS MULTI HIT ATTACKS
+A SINGLE HIT ATTACK egyszer üt nagyobb erővel, ezzel szinte garantáltan átütve a védelmet, még a MULTI HIT ATTACK több kisebb ütést visz be, ami több bónuszt is jelenthet a focused attack esetében!
+MULTI HIT hátránya: amennyiben nem ment le az összes hit és így halt meg a célpont akkor a támadás megszakad! Bizonyos karakterek csökkentik sérülés után (egyes bossok sérülés előtt) a hit számát, ha a hit az ütés előtt fogy el akkor a támadás megszakad.
+MULTI HIT előnye: Egyes effect-ek korlátozzák, hogy egy HIT-ből mennyi sebzést szenvedhet el a karakter, a sok kisebb ütést ez a korlátozzás kevésbé gyengíti, mint a SINGLE HIT ATTACK-ot.
+MULTI HIT + MULTI TARGET: ebben az esetben, ha mondjuk a támadás 5 hit akkor mindegyik target 5 hit-et kap, kivéve, ha a karakter képessége máshogy rendelkezik.
