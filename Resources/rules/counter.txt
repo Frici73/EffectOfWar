@@ -1,0 +1,8 @@
+A counter attack mechanikája lehetővé teszi a támadást körön kívül.
+Egy counter támadás akkor indulhat, ha a karakter valamely képessége létrehozott egy ilyen állapotot, majd ezt a karaktert megtámadták.
+
+Kétféle counter van: Counter és Revenge,
+Counter) Ez csak a támadót támadja meg
+Revenge) A támadó teljes csapatát megtámadja
+
+A counter nem foglalkozik a célpont választási mechanikával, ennél fogva a Taunt nem folyásolja be!

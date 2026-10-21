@@ -1,0 +1,11 @@
+A játékban két játékmód található és azok többféle verzióban.
+
+PvP és Boss battle a két fő játékmód.
+PvP) Itt két játékos ugyanazon az eszközön egymást kell legyőzzék 3-3 fős csapattal.
+Boss battle) Itt egy játékos kell legyőzzön egy boss-t egy 4 fős csapattal.
+
+A verziók mindkét játékmódhoz azonosak:
+Select) Ebben a játékmódban a csapatok gondos kiválasztása történik. Ez az alapértelmezett játékmód!
+Random) Ebben a játékmódban mindkét csapat randomizált (PvP-ben 1-1 karakter minden típusból)
+Mixed) Ebben a játékmódban a játékos(ok) csapata(i)nál ki kell választani melyik karakter típusból mennyi legyen a csapatban és az alapján randomizál a rendszer (két játékos csapat esetén külön kell a két csapatnál beállítani)
+Ban) Ez a verzió egy kiegészítés, bármelyik másik verzióval kombinálható, itt a játékosok kitiltanak mindkét oldalról valamennyi karaktert (a kitiltandó karakterek száma állítható).

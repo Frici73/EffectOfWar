@@ -1,0 +1,13 @@
+Azért van minden hol Flag, hogy a rendszer ne int-nek érzékelje az adatokat, hanem az adott osztály egyedi értékének
+A Flag-el két adat is tárolható egy változóban, mivel bit-enként módosít,
+    bit helyiértéket kell megadni!
+
+HeroType - a karaktertípusok meghatározására van, de maga a karakter nem tartalmazza, helyette a fájltól függ, hogy mi a típusa. (custom karaktereknél kommentbe a class fölé van írva)
+
+TargetLogic - ez a célpont választási logikát határozza meg, ezt a karakterek forráskódjában használtak
+
+Skill - a frontend és a backend között kerül küldésre ez az adat, ez alapján futnak le a methódusok és eljárások a karakter objektumokban
+
+HealType - Regeneration és az Ability használja a HealMultiple-t, mivel az alacsony érték, még a Lifesteal az egy sebzésből számolt érték, ezért az magas
+
+ShieldType - ezres szorzó van a Normal-ra, mivel alacsony érték, még a Stealed már létező pajzsot mozgat, ami már meg lett növelve
