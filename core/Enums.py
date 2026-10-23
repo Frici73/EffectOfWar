@@ -85,11 +85,15 @@ class StateEffect(Flag):
     AbsoluteOne = 8
     Border = 16
 
+    ALL = Taunt | Sleep | Untouchable | AbsoluteOne | Border
+
 class ComplexEffects(Flag):
     Reincarnation = 1
     HPDrop = 2
     Fear = 4
     LifePact = 8
+
+    ALL = Reincarnation | HPDrop | Fear | LifePact
 
 class DoTEffects(Flag):
     Bleeding = 1
@@ -98,7 +102,12 @@ class DoTEffects(Flag):
     Poison = 8
     Lifesteal = 16
 
+
+    ALL = Bleeding | Explosion | Fall | Poison | Lifesteal
+
 class HoTEffects(Flag):
     ManaCharge = 1
     OverRegenerate = 2
     Recover = 4
+
+    ALL = ManaCharge | OverRegenerate | Recover

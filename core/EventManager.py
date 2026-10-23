@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
+from .Enums import HealType, AttackType, ShieldType
 
 if TYPE_CHECKING:
     from .CharacterMain import BaseCharacter, StatBlock
     from .EffectBase import EffectsGroup
-    from .Enums import HealType, AttackType, ShieldType
 
 def AttackManager(Attacker:BaseCharacter, targets:list[BaseCharacter], dmgs:list[DMG]):
     DmgDealt:list[list[int]] = []

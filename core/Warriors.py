@@ -1,3 +1,5 @@
+from core.Enums import Skill
+
 from .CharacterMain import *
 
 class Barrier(BaseCharacter):
@@ -161,3 +163,33 @@ class Phase(BaseCharacter):
     def Talent(self):
         heal = Heal(HealType.Ability, self.PhysicalAttack, HealMultiple=self.HealMultiple)
         self.Heal(heal, [self])
+
+class Trash(BaseCharacter):
+    def __init__(self):
+        super().__init__(5300000, 150, 50, 30, 50, 115, 100, 115, 100,
+                        "Mouse Horde\nMegtámad 1 ellenfelet 3-szor 75% F-erővel és Taunt hatást tesz rá 1 körig", 
+                        "Trash Can\nGyógyul az elveszett életének 2,5%-val és Taunt-ol 1 körig", 
+                        "", 
+                        "Minden képesség használat után töröl magáról egy DoT hatást", 
+                        "Minden debuff lejáratát a csapaton felgyorsítja 1 körrel (DoT-ra nem hat) (4 körös cooldown, 1-es stack)")
+
+        self.TalentState = Talent(4, 0, 1)
+
+    def AfterSkillUse(self, UsedSkill: Skill):
+        self.RemoveEffect(self, 1, DoTEffects.ALL)
+
+    def SkillOne(self):
+        target = self.GetTarget(False, count=1)
+        dmg = DMG(self.PhysicalAttack*0.75, self.Punctual, DMGDealt=self.DamageDealt, hit=3)
+        self.Attack([dmg], target)
+        EffectsGroup(self, "Taunt", (StateEffect.Taunt, 0), Turn=1, identify="Debuff").Give(target[0])
+
+    def SkillTwo(self):
+        EffectsGroup(self, "Taunt", (StateEffect.Taunt, 0), Turn=1, identify="Buff").Give(self)
+        heal = Heal(HealType.Ability, int((self.MaxHitPoints-self.HitPoints)*0.025), HealMultiple=self.HealMultiple)
+        self.Heal(heal, [self])
+
+    def Talent(self):
+        for teammate in self.GetTarget(True):
+            for effect in teammate.Effects:
+                effect.OverTime(-1, teammate)

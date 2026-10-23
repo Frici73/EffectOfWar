@@ -247,3 +247,9 @@ class EffectsGroup:
                     SBlock += SBlock.Init*val//100
                 elif PBlock is not None:
                     PBlock += val
+
+    def OverTime(self, roundModify:int, Owner:BaseCharacter):
+        if self.Turn > -1:
+            self.Turn += roundModify
+            if self.Turn < 1:
+                self.Expire(Owner)

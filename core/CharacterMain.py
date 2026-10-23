@@ -6,6 +6,7 @@ lazy from os.path import join
 lazy from . import BASEPATH
 lazy from .EffectBase import Contains, MaxValue, EffectsGroup, Count
 lazy from .EventManager import AttackManager, HealManager, ShieldManager, EffectManager, DMG, Heal
+lazy from .ClassProperty import classproperty
 
 
 Team1:list[BaseCharacter] = []
@@ -371,21 +372,30 @@ class BaseCharacter:
 
         self.Identity:BaseCharacter = self # When a character copy an another character, the character make a fake version of the copied character and change the fake version identity to self else the Identity is the character
 
-    @property
-    def Name(self):
-        return str(self.__class__).split(".")[-1][:-2].replace("_", " ")
+    @classproperty
+    def Name(cls) -> str:
+        return str(cls).split(".")[-1][:-2].replace("_", " ")
 
-    @property
-    def Custom(self):
-        return self.__class__.__module__.split(".")[-1] == "UserCharacters"
+    @classproperty
+    def Custom(cls):
+        return cls.__module__.split(".")[-1] == "UserCharacters"
 
-    @property
+    @classproperty
     def HeroType(self):
         types = {"Warriors":"warrior", "Rangers":"ranger", "Supports":"support", "Bosses":"boss"}
         for type, DirName in types:
             if self.__class__.__module__.split(".")[-1] == type:
                 return DirName
         return ""
+
+    @classproperty
+    def IMGPath(cls):
+        SecDir = ""
+        if cls.Custom:
+            SecDir = "custom"
+        else:
+            SecDir = cls.HeroType
+        return join(BASEPATH, "Resources", SecDir, cls.Name.replace(" ", ""))
 
     @property
     def Dead(self):
@@ -410,15 +420,6 @@ class BaseCharacter:
         if self in Team1:
             return Team2
         return Team1
-
-    @property
-    def IMGPath(self):
-        SecDir = ""
-        if self.Custom:
-            SecDir = "custom"
-        else:
-            SecDir = self.HeroType
-        return join(BASEPATH, "Resources", SecDir, self.Name.replace(" ", ""))
 
     @property
     def Slot(self):
@@ -782,7 +783,7 @@ class BaseCharacter:
         else:
             for i in range(len(self.Effects)-1,-1,-1):
                 effect = self.Effects[i]
-                if effect.Contains(Effect):
+                if any(effect.Contains(e) for e in Effect): # effect.Contains(Effect)
                     Count-=1
                     effect.Remove(self, Remover, chance)
                     removed += 1

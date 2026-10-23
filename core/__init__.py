@@ -1,4 +1,4 @@
-__ALL__ = ["Bosses", "CharacterMain", "Effects", "Enums", "FendPieces", "GameManager", "Rangers", "Supports", "Warriors"]
+__ALL__ = ["Bosses", "CharacterMain", "Effects", "Enums", "FendPieces", "GameManager", "Rangers", "Supports", "Warriors", "ClassProperty"]
 
 BASEPATH:str = ""
 try:
