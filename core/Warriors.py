@@ -1,5 +1,3 @@
-from core.Enums import Skill
-
 from .CharacterMain import *
 
 class Barrier(BaseCharacter):

@@ -1,4 +1,4 @@
-from .Enums import *
+lazy from .Enums import HeroType, TargetLogic, Skill, HealType, ShieldType, AttackType, ShiftMode, CounterType, BasicEffect, ComplexEffects, DoTEffects, HoTEffects, StateEffect
 
 lazy from collections.abc import Callable
 lazy from random import shuffle, randint
