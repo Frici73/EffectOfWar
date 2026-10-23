@@ -1,7 +1,3 @@
-from core.CharacterMain import BaseCharacter
-from core.Enums import Skill
-from core.EventManager import DMG
-
 from .CharacterMain import *
 
 class Barrier(BaseCharacter):
@@ -131,3 +127,37 @@ class Fulmare(BaseCharacter):
     def SkillTwo(self):
         dmg = DMG(self.PhysicalAttack, self.Punctual, IgnorePhysicalDefense=100)
         self.Attack([dmg], self.GetTarget(False, count=1))
+
+class Phase(BaseCharacter):
+    def __init__(self):
+        super().__init__(4200000, 60, 60, 60, 60, 100, 100, 100, 100,
+                        "Phase Shield\nAd minden társának 150% F-erő pajzsot / Ad magának 200% F-erő pajzsot", 
+                        "Universal Trick\nMegtámad 1 ellenfelet kétszer 200% F-erővel / Növeli minden társának a DMGRes-ét 15%-al 2 körig", 
+                        "", 
+                        "Minden képesség után Shift-et vált (körkörösen)", 
+                        "3-as stackje van, 4 körönként tölt 1-et, játék elején maxon van, a talent hatására Phase-t vált és gyógyul 100% F erővel")
+
+        self.Shift = Shift(2, 0, ShiftMode.Circle)
+        self.TalentState = Talent(4, 3, 3)
+
+    def SkillOne(self):
+        match self.Shift:
+            case 1: ShieldManager(self, self.GetTarget(True), self.PhysicalAttack*1.5, ShieldType.Normal)
+            case 2: ShieldManager(self, [self], self.PhysicalAttack*2, ShieldType.Normal)
+
+    def SkillTwo(self):
+        match self.Shift:
+            case 1: 
+                dmg=DMG(self.PhysicalAttack*2, self.Punctual, DMGDealt=self.DamageDealt)
+                self.Attack([dmg], self.GetTarget(False, count=1))
+            case 2: 
+                effect = EffectsGroup(self, "DMG Resistance+", (BasicEffect.DMGResistance, 15), Turn=2, identify="Buff")
+                for teammate in self.GetTarget(True):
+                    effect.Give(teammate)
+
+    def AfterSkillUse(self, UsedSkill: Skill):
+        self.Shift.Shift()
+
+    def Talent(self):
+        heal = Heal(HealType.Ability, self.PhysicalAttack, HealMultiple=self.HealMultiple)
+        self.Heal(heal, [self])

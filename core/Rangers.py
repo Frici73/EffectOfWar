@@ -1,7 +1,3 @@
-from core.CharacterMain import BaseCharacter
-from core.EffectBase import EffectsGroup
-from core.Enums import BasicEffect, ComplexEffects, DoTEffects, HoTEffects, Skill, StateEffect
-
 from .CharacterMain import *
 
 class Lightning(BaseCharacter):

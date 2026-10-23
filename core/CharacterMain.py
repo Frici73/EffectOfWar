@@ -215,6 +215,9 @@ class Shift:
             else:
                 self.Phase += 1
 
+    def __eq__(self, value: object) -> bool:
+        return self.mode == value
+
 
 class Talent:
     def __init__(self, cooldown:int, StartStack:int, MaxStack:int=1):
