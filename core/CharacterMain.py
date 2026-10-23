@@ -254,7 +254,7 @@ class Counter:
         self.MagicalKnowledgeIncrease:int = 0
         self.DMGDealtIncrease:int = 0
 
-    def Set(self, Turn:int=0, MagicalAttackIncrease:float=0, PhysicalAttackIncrease:float=0, PunctualIncrease:int=0, MagicalKnowledgeIncrease:int=0, DMGDealtIncrease:int=0, Type:CounterType=CounterType.Counter, Hit:int=0):
+    def Set(self, Turn:int=0, MagicalAttackIncrease:float=0, PhysicalAttackIncrease:float=0, PunctualIncrease:int=0, MagicalKnowledgeIncrease:int=0, DMGDealtIncrease:int=0, Type:CounterType=CounterType.Counter, Hit:int=1):
         self.MagicalAttackIncrease = MagicalAttackIncrease
         self.PhysicalAttackIncrease = PhysicalAttackIncrease
         self.PunctualIncrease = PunctualIncrease
@@ -274,7 +274,7 @@ class Counter:
     def Counter(self, Attacker:BaseCharacter):
         if self.Turn == 0:
             return
-        dmg = DMG(int(Attacker.PhysicalAttack.Value*self.PhysicalAttackIncrease), Attacker.Punctual.Value+self.PunctualIncrease, int(Attacker.MagicalAttack.Value*self.MagicalAttackIncrease), Attacker.MagicalKnowledge.Value+self.MagicalKnowledgeIncrease, self.Hit, Attacker.DamageDealt.Value+self.DMGDealtIncrease, AType=AttackType.Counter)
+        dmg = DMG(self.Owner.PhysicalAttack*self.PhysicalAttackIncrease, self.Owner.Punctual+self.PunctualIncrease, self.Owner.MagicalAttack*self.MagicalAttackIncrease, self.Owner.MagicalKnowledge+self.MagicalKnowledgeIncrease, self.Hit, self.Owner.DamageDealt+self.DMGDealtIncrease, AType=AttackType.Counter)
         targets = None
         if self.CType == CounterType.Counter:
             targets = [Attacker]
@@ -307,8 +307,6 @@ class Reflect:
 
 class BaseCharacter:
     def __init__(self, HitPoints:int, PhysicalAttack:int, PhysicalDefense:int, MagicalAttack:int, MagicalDefense:int, ManaSensitive:int=100, MagicalKnowledge:int=100, ImmuneSystem:int=100, Punctual:int=100, SkillOne:str="", SkillTwo:str="", SkillThree:str="", Special:str="", Talent:str=""):
-        self.Name:str = str(self.__class__).split(".")[-1][:-2].replace("_", " ")
-
         # HP properties
         self.MaxHitPoints:StatBlock = StatBlock(HitPoints)
         self.HitPoints:StatBlock = StatBlock(HitPoints)
@@ -369,6 +367,10 @@ class BaseCharacter:
         self.KillCount:int = 0
 
         self.Identity:BaseCharacter = self # When a character copy an another character, the character make a fake version of the copied character and change the fake version identity to self else the Identity is the character
+
+    @property
+    def Name(self):
+        return str(self.__class__).split(".")[-1][:-2].replace("_", " ")
 
     @property
     def Custom(self):
@@ -624,6 +626,11 @@ class BaseCharacter:
 
             if self.Dead and not Contains(self.Effects, StateEffect.Untouchable):
                 Attacker.KillCount += 1
+                for teammate in self.Teammates:
+                    teammate.OnTeammateDead(self, Attacker)
+                for enemy in self.Enemies:
+                    enemy.OnEnemyDead(self, Attacker)
+                self.OnSelfDead(Attacker)
 
     def BeforeAttacked(self, Attacker:BaseCharacter, Dmg:list[DMG]):
         pass
@@ -717,6 +724,18 @@ class BaseCharacter:
     def AfterGetShield(self, Shielder:BaseCharacter, Shield:int):
         pass
 
+    def StealShield(self, steal:float) -> int:
+        summed = sum(self.Shield)
+        stealed = int(summed*steal)
+        stealed1 = stealed
+        for index, shield in enumerate(self.Shield):
+            stealed1 -= shield
+            if stealed1 < 0:
+                self.Shield[index] = abs(stealed1)
+            else:
+                self.Shield[index] = 0
+        return stealed
+
 
     def BeforeTeammateGetShield(self, Shielder:BaseCharacter, Shield:int, TargetAlly:BaseCharacter):
         pass
@@ -807,3 +826,13 @@ class BaseCharacter:
         self.Reflect.EndOfTurn()
         for effect in self.Effects:
             effect.EndOfTurn(self, True)
+
+    # Dead related functions
+    def OnTeammateDead(self, teammate:BaseCharacter, attacker:BaseCharacter):
+        pass
+
+    def OnEnemyDead(self, enemy:BaseCharacter, attacker:BaseCharacter):
+        pass
+
+    def OnSelfDead(self, attacker:BaseCharacter):
+        pass

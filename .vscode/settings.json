@@ -6,6 +6,7 @@
         "FRAMEBG",
         "relx",
         "showvalue",
+        "Stealed",
         "Taked"
     ],
     "python-envs.defaultEnvManager": "ms-python.python:system"

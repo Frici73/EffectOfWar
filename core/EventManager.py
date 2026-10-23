@@ -84,7 +84,8 @@ def HealManager(Healer:BaseCharacter, targets:list[BaseCharacter], heal:Heal):
 
     return ReturnData
 
-def ShieldManager(Shielder:BaseCharacter, targets:list[BaseCharacter], shield:int, ShieldMode:ShieldType):
+def ShieldManager(Shielder:BaseCharacter, targets:list[BaseCharacter], shield:int|StatBlock, ShieldMode:ShieldType):
+    shield = shield.Value if isinstance(shield, StatBlock) else shield
     shield *= 1000 if ShieldMode == ShieldType.Normal else 1
     for target in targets:
         if target.Dead:
